@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/generator_item"
+        android:icon="@drawable/generator_icon"
+        android:title="@string/generator_title" />
+    <item
+        android:id="@+id/vault_item"
+        android:icon="@drawable/vault_icon"
+        android:title="@string/vault" />
+    <item
+        android:id="@+id/backup_item"
+        android:icon="@drawable/synchronize_icon"
+        android:title="@string/backup" />
+    <item
+        android:id="@+id/about_item"
+        android:icon="@drawable/about_icon"
+        android:title="@string/about" />
+</menu>

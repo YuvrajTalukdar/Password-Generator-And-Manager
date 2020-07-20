@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Grey"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/Black">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/CreateNewVault"
+            android:textColor="@color/PureGreen"
+            android:layout_marginTop="20dp"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enter_vault_name"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/PureGreen"
+            android:gravity="start"
+            android:hint="@string/EnterVaultName"
+            android:textAlignment="gravity"
+            android:textColor="@color/PureRed"
+            android:textColorHint="@color/YellowishGreen" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enter_vault_Pass"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/PureGreen"
+            android:gravity="start"
+            android:hint="@string/EnterPass"
+            android:inputType="textPassword"
+            android:textAlignment="gravity"
+            android:textColor="@color/PureRed"
+            android:textColorHint="@color/YellowishGreen" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enter_vault_pass_again"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/PureGreen"
+            android:gravity="start"
+            android:hint="@string/ConfirmPass"
+            android:inputType="textPassword"
+            android:textAlignment="gravity"
+            android:textColor="@color/PureRed"
+            android:textColorHint="@color/YellowishGreen" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Black"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/vault_create_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/PureRed"
+            android:background="@drawable/blackripple"
+            android:text="@string/ok" />
+
+        <Button
+            android:id="@+id/vault_create_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/PureRed"
+            android:background="@drawable/blackripple"
+            android:text="@string/cancel" />
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

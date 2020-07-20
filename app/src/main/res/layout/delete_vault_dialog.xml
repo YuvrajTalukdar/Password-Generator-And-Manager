@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/Grey"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/Black">
+
+        <TextView
+            android:id="@+id/delete_vault_title_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_vault"
+            android:textColor="@color/PureGreen"
+            android:layout_marginTop="20dp"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Spinner
+            android:id="@+id/select_vault_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:backgroundTint="@color/PureRed"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/vault_pass_delete_vault"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/PureGreen"
+            android:gravity="start"
+            android:hint="@string/EnterPass"
+            android:inputType="textPassword"
+            android:textAlignment="gravity"
+            android:textColor="@color/PureRed"
+            android:textColorHint="@color/YellowishGreen" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Black"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/vault_delete_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/PureRed"
+            android:background="@drawable/blackripple"
+            android:text="@string/ok" />
+
+        <Button
+            android:id="@+id/vault_delete_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/PureRed"
+            android:background="@drawable/blackripple"
+            android:text="@string/cancel" />
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/Grey"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/Black">
+
+        <TextView
+            android:id="@+id/delete_vault_title_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_new_password"
+            android:textColor="@color/PureGreen"
+            android:layout_marginTop="20dp"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/enter_account_id_EditText"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/PureGreen"
+                android:gravity="start"
+                android:hint="@string/account_id"
+                android:textAlignment="gravity"
+                android:textColor="@color/PureRed"
+                android:textColorHint="@color/YellowishGreen"
+                android:layout_weight="5"/>
+
+            <ImageButton
+                android:id="@+id/id_paste"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+
+                android:background="@drawable/copy_buttom_style"
+                android:contentDescription="@string/Copy_Pass"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/copy_icon"
+                android:layout_weight="1"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_type_EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/PureGreen"
+                    android:gravity="start"
+                    android:hint="@string/account_type"
+                    android:textAlignment="gravity"
+                    android:textColor="@color/PureRed"
+                    android:textColorHint="@color/YellowishGreen"
+                    android:layout_weight="5"/>
+
+                <ImageButton
+                    android:id="@+id/account_type_paste"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+
+                    android:background="@drawable/copy_buttom_style"
+                    android:contentDescription="@string/Copy_Pass"
+                    android:padding="5dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/copy_icon"
+                    android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/enter_password_EditText"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/PureGreen"
+                android:gravity="start"
+                android:hint="@string/EnterPass"
+                android:inputType="textPassword"
+                android:textAlignment="gravity"
+                android:textColor="@color/PureRed"
+                android:textColorHint="@color/YellowishGreen"
+                android:layout_weight="5"/>
+
+        <ImageButton
+            android:id="@+id/password_paste"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+
+            android:background="@drawable/copy_buttom_style"
+            android:contentDescription="@string/Copy_Pass"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/copy_icon"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Black"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/enter_new_password_dialog_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/PureRed"
+            android:background="@drawable/blackripple"
+            android:text="@string/ok" />
+
+        <Button
+            android:id="@+id/enter_new_password_dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/PureRed"
+            android:background="@drawable/blackripple"
+            android:text="@string/cancel" />
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
