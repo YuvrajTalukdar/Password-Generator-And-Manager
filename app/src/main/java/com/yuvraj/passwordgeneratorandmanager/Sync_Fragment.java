@@ -1,5 +1,6 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,58 +8,132 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Switch;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Sync_Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 public class Sync_Fragment extends Fragment {
+    public boolean is_signed_in=false;
+    public Button sign_in_button;
+    private Button sync_now_button;
+    private Button perform_local_backup;
+    private Button load_backup_file;
+    private Switch auto_sync_enable;
+    public TextView signed_in_account_name_textView;
+    private MainActivity main_activity;
+    sync_fragment_listener listener;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Sync_Fragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Sync_Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Sync_Fragment newInstance(String param1, String param2) {
-        Sync_Fragment fragment = new Sync_Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    public Sync_Fragment()
+    {}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    }
+
+    interface sync_fragment_listener
+    {
+        GoogleSignInAccount get_sign_in_status();
+        void sign_in_with_google();
+        void sign_out();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sync, container, false);
+        View v = inflater.inflate(R.layout.fragment_sync, container, false);
+        //initialize all the UI components
+        main_activity=(MainActivity)getActivity();
+
+        signed_in_account_name_textView=v.findViewById(R.id.account_name_TextView);
+
+        sign_in_button=v.findViewById(R.id.Sign_In_With_Google_Account);
+        sign_in_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(is_signed_in==false)
+                {   listener.sign_in_with_google();}
+                else
+                {   listener.sign_out();}
+            }
+        });
+        if(main_activity.is_signed_in==false)
+        {
+            sign_in_button.setText(R.string.sign_in_button_text);
+            signed_in_account_name_textView.setText(R.string.not_signed_in);
+        }
+        else
+        {
+            sign_in_button.setText(R.string.sign_out_button_text);
+            GoogleSignInAccount account=listener.get_sign_in_status();
+            signed_in_account_name_textView.setText(account.getEmail());
+        }
+        is_signed_in=main_activity.is_signed_in;
+
+        sync_now_button=v.findViewById(R.id.sync_now_button);
+        sync_now_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        perform_local_backup=v.findViewById(R.id.Perform_Local_Backup);
+        perform_local_backup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        load_backup_file=v.findViewById(R.id.Load_Backup_file);
+        load_backup_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        auto_sync_enable=v.findViewById(R.id.Auto_sync_switch);
+        //check if the app is already signed in
+        //check for rest of the stuff
+        return v;
     }
+
+    public void check_sign_in_status(String str)
+    {
+        if(main_activity.is_signed_in)
+        {
+            is_signed_in=true;
+            sign_in_button.setText(R.string.sign_out_button_text);
+            signed_in_account_name_textView.setText(str);
+        }
+        else
+        {
+            is_signed_in=false;
+            sign_in_button.setText(R.string.sign_in_button_text);
+            signed_in_account_name_textView.setText(R.string.not_signed_in);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        if(context instanceof Vault_Fragment.Vault_Fragment_Listener)
+        {
+            listener=(Sync_Fragment.sync_fragment_listener) context;
+        }
+        else
+        {   throw new RuntimeException(context.toString()+"must implement Sync_Fragment_Listener");}
+    }
+
+    @Override
+    public void onDetach()
+    {
+        super.onDetach();
+        listener = null;
+    }
+
 }

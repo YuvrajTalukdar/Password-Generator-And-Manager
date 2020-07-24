@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Vault_Fragment extends Fragment {
 
@@ -36,9 +35,6 @@ public class Vault_Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     interface Vault_Fragment_Listener
@@ -141,6 +137,7 @@ public class Vault_Fragment extends Fragment {
         {
             main_activity.pending_data_entry=false;
             add_single_data_to_recycle_view(main_activity.pending_data);
+            delete_vault.setEnabled(false);
         }
         return v;
     }

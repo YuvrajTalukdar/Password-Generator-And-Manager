@@ -27,6 +27,8 @@
         <string name="EnterVaultName">Enter Vault Name</string>
         <string name="EnterPass">Enter Password</string>
         <string name="ConfirmPass">Confirm Password</string>
+        <string name="vault_not_opened_status">Open a vault to display its data.</string>
+        <string name="empty_vault_status">No password data in the vault.</string>
         <string name="ok">OK</string>
         <string name="cancel">CANCEL</string>
     <!-- strings used for card view layout -->
@@ -41,12 +43,21 @@
         <string name="enter_new_password">Add New Password</string>
         <string name="account_id">Enter Account ID</string>
         <string name="account_type">Enter Account Type</string>
+    <!-- Strings for Sync fragment -->
+        <string name="Online_Backup">Online Backup</string>
+        <string name="Offline_Backup">Offline Backup</string>
+        <string name="Perform_Local_Backup">Perform Local Backup</string>
+        <string name="Load_Backup_File">Load Backup File</string>
+        <string name="sign_in_google">Sign In with Google</string>
+        <string name="sunc_button_text">Sync Now</string>
+        <string name="AutoSync">Auto Sync</string>
+        <string name="sign_in_button_text">Sign In with Google</string>
+        <string name="sign_out_button_text">Sign Out</string>
+    <string name="not_signed_in">Not signed in.</string>
 
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
-    <string name="hello_world">Hello Square World!</string>
-    <string name="vault_not_opened_status">Open a vault to display its data.</string>
-    <string name="empty_vault_status">No password data in the vault.</string>
+
 </resources>

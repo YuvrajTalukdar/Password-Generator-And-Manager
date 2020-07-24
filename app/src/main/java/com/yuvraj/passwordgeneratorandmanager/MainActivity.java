@@ -1,12 +1,33 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
+import android.accounts.AccountManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.DriveScopes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -18,11 +39,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
@@ -31,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                                Vault_Fragment.Vault_Fragment_Listener,
                                                                create_vault_dialog.create_vault_dialog_listener,
                                                                delete_vault_dialog.delete_vault_dialog_listener,
-                                                               enter_new_pass_dialog.enter_new_pass_dialog_listener{
+                                                               enter_new_pass_dialog.enter_new_pass_dialog_listener,
+                                                               Sync_Fragment.sync_fragment_listener{
 
     //android ready_made resource
     DrawerLayout drawer_layout;
@@ -51,6 +74,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean vault_open=false;
     public boolean delete_dialog_start=false,open_vault_dialog_start=false;
     private Vault_Fragment vaultFragment;
+
+    //sync_fragment variables
+    private Sync_Fragment syncFragment;
+    public boolean is_signed_in=false;
+    private GoogleSignInClient mGoogleSignInClient;
+    private DriveServiceHelper mDriveServiceHelper;
+    private static final int REQUEST_CODE_SIGN_IN = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +110,123 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         clipboard=(ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         vault_db=new database_handler(this,true);
         vault_data_list=new ArrayList<>();
-    }
 
-    //Key_Generator_fragment interface functions
+        //sign in functions
+        get_sign_in_status();
+    }
+    //------------------------------------------------------------------------------------sync fragment functions----------------------------------------------------------------------------------------------------
+    public GoogleSignInAccount get_sign_in_status()
+    {
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+        if(account==null)
+        {   is_signed_in=false;
+            System.out.println("Not Signed in");
+        }
+        else
+        {   is_signed_in=true;
+            System.out.println("Signed in");
+            //get the account obj or something like that
+        }
+        return account;
+    }
+    private GoogleSignInClient buildGoogleSignInClient() {
+        GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(Drive.SCOPE_FILE)
+                        .requestEmail()
+                        .build();
+        return GoogleSignIn.getClient(getApplicationContext(), signInOptions);
+    }
+    @Override
+    public void sign_in_with_google()
+    {
+        mGoogleSignInClient=buildGoogleSignInClient();
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+    @Override
+    protected void onActivityResult(int request, int result, Intent data)
+    {
+        System.out.println("request="+request+" result="+result);
+        if(data==null)
+        {   System.out.println("DATA IS NULL");}
+        if(request==100 && result==1)
+        {   Toast.makeText(getApplicationContext(), "No account selected.", Toast.LENGTH_SHORT).show();}
+        else if(request==100)
+        {
+            sign_in_handler(data);
+        }
+        super.onActivityResult(request,result,data);
+    }
+    private void sign_in_handler(Intent data) {
+        GoogleSignIn.getSignedInAccountFromIntent(data).addOnSuccessListener(new OnSuccessListener<GoogleSignInAccount>() {
+            @Override
+            public void onSuccess(GoogleSignInAccount googleSignInAccount) {
+                System.out.println("Sign in successful.");
+                is_signed_in = true;
+                syncFragment = (Sync_Fragment) getSupportFragmentManager().findFragmentByTag("syncFragment");
+                syncFragment.check_sign_in_status(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
+                initialize_google_drive_service_helper();
+                Toast.makeText(getApplicationContext(), "Sign in complete.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("Failed to sign in. Cause: ");
+                e.printStackTrace();
+            }
+        });
+    }
+    private void initialize_google_drive_service_helper()
+    {
+        if (is_signed_in)
+        {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+            GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(getApplicationContext(), Collections.singleton(DriveScopes.DRIVE_FILE));
+            credential.setSelectedAccount(account.getAccount());
+            com.google.api.services.drive.Drive googleDriveService = new com.google.api.services.drive.Drive.Builder(AndroidHttp.newCompatibleTransport(),
+                    new GsonFactory(),
+                    credential).setApplicationName("AppName").build();
+            mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+            System.out.println("Initialized gdriveServiceHelper.");
+        }
+    }
+    @Override
+    public void sign_out()
+    {
+        String account_name=GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail();
+        final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
+        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color='#5CEF1C'>Sign Out</font>"));
+        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color='#FF0000'>Are you sure you want to sign out?</font>"));
+        materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
+        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mGoogleSignInClient=buildGoogleSignInClient();
+                mGoogleSignInClient.signOut().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        System.out.println("Sign out successful.");
+                        is_signed_in=false;
+                        syncFragment = (Sync_Fragment) getSupportFragmentManager().findFragmentByTag("syncFragment");
+                        syncFragment.check_sign_in_status(null);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Sign out failed. Cause: "+e.getStackTrace());
+                    }
+                });
+                Toast.makeText(getApplicationContext(), "Signed Out of "+account_name, Toast.LENGTH_SHORT).show();
+            }
+        });
+        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        materialAlertDialogBuilder.show();
+    }
+    //--------------------------------------------------------------------------Key_Generator_fragment interface functions--------------------------------------------------------------------------------------------
     private String generated_password;
     @Override
     public void add_to_vault_button(String pass)
@@ -114,7 +259,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-
     @Override
     public void on_copied_pass_sent(CharSequence pass)
     {
@@ -122,7 +266,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getApplicationContext(),"Password Copied", Toast.LENGTH_SHORT).show();
     }
-    //Vault_Fragment interface functions
+
+    //------------------------------------------------------------------------------Vault_Fragment interface functions--------------------------------------------------------------------------------------------------
     //add new pass dialog functions
     @Override
     public void paste_id()
@@ -164,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    //enter new pass dialog functions
     public  boolean pending_data_entry=false;
     public vault_data pending_data;
     @Override
@@ -211,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {   enterNewPassDialog.generated_pass=generated_password;}
         enterNewPassDialog.show(getSupportFragmentManager(),"EnterNewPassDialog");
     }
+
     //open vault dialog functions
     public boolean is_a_vault_open()
     {   return vault_open;}
@@ -222,10 +369,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         deleteVaultDialog.called_from_option=called_from;
         deleteVaultDialog.show(getSupportFragmentManager(),"DeleteVaultDialog");
     }
-
-    public ArrayList<vault_data> get_recycler_view_data()
-    {   return vault_data_list;}
-
     private void open_vault(int spinner_position,String password,int called_from)
     {
         database_handler.vault_data_and_error_status obj=vault_db.get_data_from_table(spinner_position,
@@ -270,6 +413,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         vault_db.close_vault();
         //remove data from recycler view
     }
+
     //recycler_view functions
     @Override
     public void copy_password_button_onclick(String copy_password)
@@ -320,6 +464,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         materialAlertDialogBuilder.show();
     }
+
     //delete_vault_dialog functions
     public ArrayList<String> get_vault_names()
     {
@@ -365,6 +510,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+
     //create_new_vault_dialog functions
     @Override
     public void create_new_vault_dialog()//from fragment
@@ -412,7 +558,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-    //function for drawer window
+
+    //----------------------------------------------------------------------------------function for drawer window-----------------------------------------------------------------------------------------------------
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menu_item) {
         drawer_layout.closeDrawer(GravityCompat.START);
@@ -431,7 +578,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else if(menu_item.getItemId()==R.id.backup_item)
         {
-
+            fragment_manager=getSupportFragmentManager();
+            fragment_manager.beginTransaction().replace(R.id.container_fragment,new Sync_Fragment(),"syncFragment").commit();
+            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Cloud Sync & Local Backup" + "</font>"));
         }
         else if(menu_item.getItemId()==R.id.about_item)
         {

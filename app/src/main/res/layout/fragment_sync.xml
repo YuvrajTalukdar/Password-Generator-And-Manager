@@ -1,14 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_vault_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Sync_Fragment">
+    tools:context=".Key_Generator_Fragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="sync" />
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Online_Backup"
+        android:textColor="@color/PureGreen"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
-</FrameLayout>
+    <Switch
+        android:id="@+id/Auto_sync_switch"
+        android:layout_width="129dp"
+        android:layout_height="40dp"
+        android:layoutDirection="ltr"
+        android:text="@string/AutoSync"
+        android:textColor="@color/Teal"
+        android:theme="@style/SCBSwitch"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/Sign_In_With_Google_Account"
+        android:layout_width="139dp"
+        android:layout_height="44dp"
+        android:background="@drawable/generate_pass_button_style"
+        android:text="@string/sign_in_google"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toStartOf="@+id/sync_now_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+    <Button
+        android:id="@+id/sync_now_button"
+        android:layout_width="139dp"
+        android:layout_height="44dp"
+        android:background="@drawable/generate_pass_button_style"
+        android:text="@string/sunc_button_text"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/Sign_In_With_Google_Account"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+    <Button
+        android:id="@+id/Perform_Local_Backup"
+        android:layout_width="179dp"
+        android:layout_height="48dp"
+
+        android:background="@drawable/generate_pass_button_style"
+        android:text="@string/Perform_Local_Backup"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/Load_Backup_file"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Offline_Backup"
+        android:textColor="@color/PureGreen"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/Perform_Local_Backup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Auto_sync_switch" />
+
+    <Button
+        android:id="@+id/Load_Backup_file"
+        android:layout_width="179dp"
+        android:layout_height="48dp"
+        android:background="@drawable/generate_pass_button_style"
+        android:text="@string/Load_Backup_File"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Perform_Local_Backup" />
+
+    <TextView
+        android:id="@+id/account_name_TextView"
+        android:layout_width="379dp"
+        android:layout_height="wrap_content"
+        android:background="@color/Grey"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/PureRed"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="0dp"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="0dp"
+        app:layout_constraintGuide_percent="0.125" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="0dp"
+        app:layout_constraintGuide_percent="0.215" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="0dp"
+        app:layout_constraintGuide_percent="0.25" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
