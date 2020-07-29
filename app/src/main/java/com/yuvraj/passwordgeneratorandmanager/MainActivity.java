@@ -1,27 +1,18 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
-import android.accounts.AccountManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -33,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -41,6 +33,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -100,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         action_bar_toggle.syncState();
         getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
         deleteVaultDialog=new delete_vault_dialog();
+        Window window = getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.DarkGrey));
+        window.setNavigationBarColor(getResources().getColor(R.color.Black,null));
         //load default fragment
         fragment_manager=getSupportFragmentManager();
         fragment_transaction=fragment_manager.beginTransaction();
@@ -115,6 +112,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         get_sign_in_status();
     }
     //------------------------------------------------------------------------------------sync fragment functions----------------------------------------------------------------------------------------------------
+    @Override
+    public void local_backup_restore(int start_code) {
+        final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
+        if (start_code == 1)//perform local backup
+        {
+            materialAlertDialogBuilder.setTitle(Html.fromHtml(getString(R.string.perform_local_backup_dialog_box_title)));
+            materialAlertDialogBuilder.setMessage(Html.fromHtml(getString(R.string.perform_local_backup_dialog_box_message)));
+        }
+        else if(start_code==2)//load backup file
+        {
+            materialAlertDialogBuilder.setTitle(Html.fromHtml(getString(R.string.perform_local_backup_dialog_box_title)));//both the title are same
+            materialAlertDialogBuilder.setMessage(Html.fromHtml(getString(R.string.load_backup_file_dialog_box_message)));
+        }
+        materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
+
+        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (start_code == 1) {
+                    Intent file_explorer_intent = new Intent(MainActivity.this, File_Explorer_Activity.class);
+                    file_explorer_intent.putExtra("file_explorer_intent_start_motive", "backup_file");
+                    startActivityForResult(file_explorer_intent, 1);
+                }
+                else if (start_code == 2)
+                {
+                    Intent file_explorer_intent = new Intent(MainActivity.this, File_Explorer_Activity.class);
+                    file_explorer_intent.putExtra("file_explorer_intent_start_motive", "load_file");
+                    startActivityForResult(file_explorer_intent, 2);
+                }
+            }
+        });
+        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        materialAlertDialogBuilder.show();
+    }
     public GoogleSignInAccount get_sign_in_status()
     {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
