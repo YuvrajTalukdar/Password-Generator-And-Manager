@@ -1,18 +1,26 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class Sync_Fragment extends Fragment {
     public boolean is_signed_in=false;
@@ -37,6 +45,7 @@ public class Sync_Fragment extends Fragment {
         GoogleSignInAccount get_sign_in_status();
         void sign_in_with_google();
         void sign_out();
+        void local_backup_restore(int start_code);
     }
 
     @Override
@@ -75,7 +84,6 @@ public class Sync_Fragment extends Fragment {
         sync_now_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
             }
         });
 
@@ -83,7 +91,7 @@ public class Sync_Fragment extends Fragment {
         perform_local_backup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                listener.local_backup_restore(1);
             }
         });
 
@@ -91,7 +99,7 @@ public class Sync_Fragment extends Fragment {
         load_backup_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                listener.local_backup_restore(2);
             }
         });
 

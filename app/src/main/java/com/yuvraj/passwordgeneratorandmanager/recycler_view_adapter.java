@@ -1,5 +1,5 @@
 package com.yuvraj.passwordgeneratorandmanager;
-
+//This adapter is for vault_fragment recycler view
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

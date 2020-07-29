@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/Black">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:background="@color/Black">
+            <ImageView
+                android:id="@+id/file_folder_icon_imageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/folder_icon" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:weightSum="5"
+                android:background="@color/Black">
+
+                <TextView
+                    android:id="@+id/file_folder_name_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:paddingStart="15dp"
+                    android:background="@drawable/blackripple"
+                    android:gravity="left|center_vertical"
+                    android:text="Testing..."
+                    android:textColor="@color/PureRed"
+                    android:textSize="18sp" />
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="15dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/PureGreen" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

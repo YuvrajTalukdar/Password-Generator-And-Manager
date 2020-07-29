@@ -162,7 +162,6 @@ public class Vault_Fragment extends Fragment {
 
     public void add_multiple_data_to_recyclerview(ArrayList<vault_data> data_list)
     {
-        System.out.println("Size="+data_list.size());
         if(data_list.isEmpty()) {
             status_textview.setText(R.string.empty_vault_status);
             status_textview.setVisibility(View.VISIBLE);

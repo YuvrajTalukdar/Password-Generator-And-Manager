@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.yuvraj.passwordgeneratorandmanager">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE " tools:remove="android:maxSdkVersion" tools:node="replace" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:remove="android:maxSdkVersion"/>
 
     <application
         android:allowBackup="true"
@@ -12,22 +14,24 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true">
+        <activity
+            android:name=".File_Explorer_Activity"
+            android:label="@string/title_activity_file__explorer_"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+            android:windowSoftInputMode="adjustNothing">
 
+        </activity>
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
         -->
-        <meta-data
-            android:name="com.google.android.wearable.standalone"
-            android:value="true" />
-
-
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="com.yuvraj.passwordgeneratorandmanager.MainActivity" />
