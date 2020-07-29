@@ -1,13 +1,8 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
 import android.Manifest;
-import android.app.Instrumentation;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
-import android.os.FileUtils;
 import android.provider.DocumentsContract;
 import android.text.Html;
 import android.view.View;
@@ -32,15 +26,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 
-public class File_Explorer_Activity extends AppCompatActivity {
+public class File_Explorer_Activity extends AppCompatActivity implements new_folder_dialog.new_folder_dialog_listener{
 
     private TextView folder_name_text_view;
     private RecyclerView recycler_view;
@@ -50,12 +42,14 @@ public class File_Explorer_Activity extends AppCompatActivity {
     private Uri uri;
     private DocumentFile curDocumentFile,rootDocumentFile;
     private Stack<DocumentFile> DocumentFile_stack=new Stack<>();
+    private new_folder_dialog new_folder_dialog_obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_explorer);
 
+        new_folder_dialog_obj=new new_folder_dialog();
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
 
         Button save_load_button=findViewById(R.id.save_load_button);
@@ -82,8 +76,7 @@ public class File_Explorer_Activity extends AppCompatActivity {
         create_new_folder_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
-
+                new_folder_dialog_obj.show(getSupportFragmentManager(),"new_folder_dialog");
             }
         });
 
@@ -128,6 +121,27 @@ public class File_Explorer_Activity extends AppCompatActivity {
         folder_stack.clear();
         if(permission_got)
         {   add_multiple_data_to_recycle_view(root);}*/
+    }
+
+    @Override
+    public void on_new_folder_name_send(int option,String name)
+    {
+        if(option==0)
+        {
+            if(name.isEmpty())
+            {   Toast.makeText(getApplicationContext(), "Please enter a folder name.", Toast.LENGTH_LONG).show();}
+            else if(curDocumentFile.findFile(name)!=null)
+            {   Toast.makeText(getApplicationContext(),"Folder with name '"+ name+"' already exist, please enter a different name.", Toast.LENGTH_LONG).show();}
+            else
+            {
+                curDocumentFile.createDirectory(name);
+                empty_recycler_view();
+                add_multiple_data_to_recycle_view(curDocumentFile);
+                new_folder_dialog_obj.dismiss();
+            }
+        }
+        else if(option==1)
+        {   new_folder_dialog_obj.dismiss();}
     }
 
     void request_root_dir_uri()

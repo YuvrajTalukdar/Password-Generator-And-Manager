@@ -64,7 +64,6 @@
     <string name="perform_local_backup_dialog_box_message"><![CDATA[<font color=\'#FF0000\'>To perform local backup permission is required to save the backup file in your local storage. Please press ok and select grant permission to proceed further.</font>]]></string>
     <string name="perform_local_backup_dialog_box_title"><![CDATA[<font color=\'#5CEF1C\'>Permission required..</font>]]></string>
 
-
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
