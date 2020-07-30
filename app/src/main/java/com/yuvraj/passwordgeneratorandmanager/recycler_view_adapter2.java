@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,22 +47,31 @@ public class recycler_view_adapter2 extends RecyclerView.Adapter<recycler_view_a
     public interface directory_data_handler_adapter_listener
     {
         void file_folder_onclick(View v,int data_id,int position);
+        void delete_file_folder(View v,int data_id,int position);
     }
     private directory_data_handler_adapter_listener onclicklistener;
 
     public class directory_data_handler_holder extends RecyclerView.ViewHolder{
         TextView file_folder_text_view;
         ImageView file_folder_icon_image_view;
+        ImageButton delete_button;
         public directory_data_handler_holder(@NonNull View itemView) {
             super(itemView);
-
-            file_folder_text_view=(TextView)itemView.findViewById(R.id.file_folder_name_text_view);
-            file_folder_icon_image_view=(ImageView)itemView.findViewById(R.id.file_folder_icon_imageView);
+            delete_button=itemView.findViewById(R.id.file_folder_delete_button);
+            file_folder_text_view= itemView.findViewById(R.id.file_folder_name_text_view);
+            file_folder_icon_image_view= itemView.findViewById(R.id.file_folder_icon_imageView);
 
             file_folder_text_view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     onclicklistener.file_folder_onclick(view,directory_data_handler_list.get(getAdapterPosition()).id,getAdapterPosition());
+                }
+            });
+
+            delete_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onclicklistener.delete_file_folder(view,directory_data_handler_list.get(getAdapterPosition()).id,getAdapterPosition());
                 }
             });
         }

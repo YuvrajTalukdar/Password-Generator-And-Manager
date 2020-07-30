@@ -1,6 +1,7 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -25,6 +26,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -113,6 +116,10 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
                     add_multiple_data_to_recycle_view(curDocumentFile);
                 }
             }
+
+            @Override
+            public void delete_file_folder(View v,int data_id,int position)
+            {   delete_file_folder_on_click(data_id,position);}
         });
         recycler_view.setAdapter(recycler_view_adapter2_obj);
         LinearLayoutManager linear_layout=new LinearLayoutManager(this);
@@ -121,6 +128,52 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         folder_stack.clear();
         if(permission_got)
         {   add_multiple_data_to_recycle_view(root);}*/
+        setTheme(R.style.AppTheme);//this is for fixing the alert dialog box crash.
+    }
+
+    void delete_file_folder_on_click(int data_id,int position)
+    {
+        String file_folder_message="",name="";
+        if(directory_data_handlers_list.get(position).is_folder)
+        {   file_folder_message="Folder";}
+        else
+        {   file_folder_message="File";}
+        final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color='#5CEF1C'>Delete "+file_folder_message+"..</font>"));
+        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color='#FF0000'>Are you sure you want to delete "+name+"?</font>"));
+        materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
+
+        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                boolean ok=false;
+                String file_folder_message="",name="";
+                if (directory_data_handlers_list.get(position).id == data_id)
+                {
+                    name=directory_data_handlers_list.get(position).file_folder_name;
+                    if(directory_data_handlers_list.get(position).is_folder)
+                    {   file_folder_message="Folder";}
+                    else
+                    {   file_folder_message="File";}
+                    if (directory_data_handlers_list.get(position).file.delete())
+                    {
+                        directory_data_handlers_list.remove(position);
+                        recycler_view_adapter2_obj.notifyItemRemoved(position);
+                        ok=true;
+                    }
+                }
+                if(ok==true)
+                {   Toast.makeText(getApplicationContext(),file_folder_message+" "+name+" deleted.", Toast.LENGTH_LONG).show();}
+                else
+                {   Toast.makeText(getApplicationContext(),"Delete operation failed!", Toast.LENGTH_LONG).show();}
+            }
+        });
+        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        materialAlertDialogBuilder.show();
     }
 
     @Override
