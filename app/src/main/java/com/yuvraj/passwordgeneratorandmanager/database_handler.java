@@ -303,6 +303,34 @@ public class database_handler extends SQLiteOpenHelper {
         }
     }
 
+    public String get_raw_data_from_table(String actual_table_name)//used for data backup
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        String data="";
+        String query = "SELECT * FROM " + actual_table_name;
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        String header=id+","+account_type_name+","+account_login_id+","+account_password+","+entry_date+","+is_meta_data+","+vault_name+"\n";
+        while(!c.isAfterLast())
+        {
+            String data1=c.getInt(c.getColumnIndex(id))+","+
+                          c.getString(c.getColumnIndex(account_type_name))+","+
+                          c.getString(c.getColumnIndex(account_login_id))+","+
+                          c.getString(c.getColumnIndex(account_password))+","+
+                          c.getString(c.getColumnIndex(entry_date))+","+
+                          c.getInt(c.getColumnIndex(is_meta_data))+","+
+                          c.getString(c.getColumnIndex(vault_name));
+            data1=data1.replace("\n","").replace("\r","");
+            data1=data1+"\n";
+            data=data+data1;
+            System.out.println(data1);
+            c.moveToNext();
+        }
+        data=header+data;
+        db.close();
+        return data;
+    }
+
     public int add_data_to_table(String new_account_id,String type,String pass)
     {
         if(!vault_open)

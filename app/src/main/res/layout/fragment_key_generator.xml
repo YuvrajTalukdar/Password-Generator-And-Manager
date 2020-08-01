@@ -12,10 +12,11 @@
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/password_edit_text"
         android:layout_width="315dp"
-        android:layout_height="112dp"
+        android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:backgroundTint="@color/PureGreen"
         android:gravity="bottom|left"
         android:textAlignment="gravity"

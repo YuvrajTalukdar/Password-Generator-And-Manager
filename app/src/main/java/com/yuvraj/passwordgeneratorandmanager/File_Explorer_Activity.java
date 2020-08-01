@@ -23,22 +23,29 @@ import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 
 public class File_Explorer_Activity extends AppCompatActivity implements new_folder_dialog.new_folder_dialog_listener{
 
     private TextView folder_name_text_view;
     private RecyclerView recycler_view;
+    private EditText file_name;
     private recycler_view_adapter2 recycler_view_adapter2_obj;
     private ArrayList<directory_data_handler> directory_data_handlers_list=new ArrayList<>();
     private File root;
@@ -46,7 +53,7 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
     private DocumentFile curDocumentFile,rootDocumentFile;
     private Stack<DocumentFile> DocumentFile_stack=new Stack<>();
     private new_folder_dialog new_folder_dialog_obj;
-
+    private int save_load_code;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +62,43 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         new_folder_dialog_obj=new new_folder_dialog();
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
 
+        file_name=findViewById(R.id.file_name);
         Button save_load_button=findViewById(R.id.save_load_button);
         String start_motive = getIntent().getStringExtra("file_explorer_intent_start_motive");
         if(start_motive.equals("load_file"))
         {
             save_load_button.setText(R.string.Load_Vault_File);
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Load Backup File" + "</font>"));
+            save_load_code=0;
         }
         else if(start_motive.equals("backup_file"))
         {
             save_load_button.setText(R.string.Backup_Vaults);
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Backup Data" + "</font>"));
+            save_load_code=1;
         }
+        save_load_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(save_load_code==0)//load vault file
+                {
+                    load_backup_file(file_name.getText().toString());
+                }
+                else if(save_load_code==1)//save vault file
+                {
+                    if(file_name.getText().toString().isEmpty())
+                    {    Toast.makeText(getApplicationContext(),"Please enter a name.", Toast.LENGTH_LONG).show();}
+                    else if(curDocumentFile.findFile(file_name.getText().toString()+".zip")!=null)
+                    {    Toast.makeText(getApplicationContext(),file_name.getText().toString()+".zip is already present. Please enter a different name", Toast.LENGTH_LONG).show();}
+                    else
+                    {
+                        backup_data_handler(file_name.getText().toString());
+                        Toast.makeText(getApplicationContext(),"Local backup complete.", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                }
+            }
+        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Window window = getWindow();
@@ -112,9 +144,13 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
                 {
                     DocumentFile_stack.push(directory_data_handlers_list.get(position).file);
                     curDocumentFile=directory_data_handlers_list.get(position).file;
+                    if(save_load_code==0)
+                    {   file_name.setText("");}
                     empty_recycler_view();
                     add_multiple_data_to_recycle_view(curDocumentFile);
                 }
+                else if(!directory_data_handlers_list.get(position).is_folder && save_load_code==0)
+                {   file_name.setText(directory_data_handlers_list.get(position).file.getName());}
             }
 
             @Override
@@ -129,6 +165,43 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         if(permission_got)
         {   add_multiple_data_to_recycle_view(root);}*/
         setTheme(R.style.AppTheme);//this is for fixing the alert dialog box crash.
+    }
+
+    void load_backup_file(String backup_file_name)
+    {}
+
+    void backup_data_handler(String zip_file_name)
+    {
+        //getting the meta data from the database and initializing the required database variables.
+        database_handler vault_db=new database_handler(this,true);
+        ArrayList<String[]> table_name_array_list=vault_db.get_table_name_vault_names();
+        //creating the mete data file.
+
+        //compression of data
+        try
+        {
+            curDocumentFile.createFile("",zip_file_name+".zip");
+            DocumentFile zip_file=curDocumentFile.findFile(zip_file_name+".zip");
+            OutputStream out=getContentResolver().openOutputStream(zip_file.getUri());
+            ZipOutputStream zip_out = new ZipOutputStream(new BufferedOutputStream(out));
+            for(int a=0;a<table_name_array_list.size();a++)
+            {
+                ZipEntry entry = new ZipEntry(table_name_array_list.get(a)[0]);
+                entry.setTime(zip_file.lastModified()); // to keep modification time after unzipping
+                zip_out.putNextEntry(entry);
+                zip_out.write(vault_db.get_raw_data_from_table(table_name_array_list.get(a)[0]).getBytes());
+            }
+            zip_out.close();
+            out.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println("Failed gzip!!");
+            e.printStackTrace();
+        }
+        //clearing of data
+        vault_db.close();
+        table_name_array_list.clear();
     }
 
     void delete_file_folder_on_click(int data_id,int position)
@@ -284,7 +357,12 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         for (DocumentFile file : files)
         {
             if(!file.isDirectory())
-            {   directory_data_handlers_list_for_files.add(new directory_data_handler(id,file));}
+            {
+                if(save_load_code==1)
+                {   directory_data_handlers_list_for_files.add(new directory_data_handler(id,file));}
+                else if(save_load_code==0 && file.getName().endsWith(".zip"))
+                {   directory_data_handlers_list_for_files.add(new directory_data_handler(id,file));}
+            }
             else
             {   directory_data_handlers_list_for_folders.add(new directory_data_handler(id,file));}
             id++;
