@@ -10,7 +10,10 @@ import androidx.annotation.Nullable;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -70,7 +73,17 @@ public class database_handler extends SQLiteOpenHelper {
                 }
             }
         }
-        return string_buff.toString();
+        return string_buff.toString()+"_"+create_unique_id_based_on_time();
+    }
+
+    private String create_unique_id_based_on_time()
+    {
+        int y=Calendar.getInstance().get(Calendar.YEAR);
+        int m=Calendar.getInstance().get(Calendar.MONTH);
+        int d=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        long t=Calendar.getInstance().getTime().getTime();
+        System.out.println("date_time="+y+"_"+m+"_"+d+"_"+t);
+        return y+"_"+m+"_"+d+"_"+t;
     }
 
     public int create_table(String tablename,String password)//done and checked
@@ -164,7 +177,6 @@ public class database_handler extends SQLiteOpenHelper {
             {
                 table_and_vault_name = new String[3];
                 table_and_vault_name[0] = c.getString(0);
-                System.out.println("table_name=" + table_and_vault_name[0]);
                 table_and_vault_name[1] = get_particular_table_metadata(db, table_and_vault_name[0], vault_name);
                 table_and_vault_name[2] = get_particular_table_metadata(db, table_and_vault_name[0], account_password);
                 table_name_and_vault_name_list.add(table_and_vault_name);
@@ -303,14 +315,131 @@ public class database_handler extends SQLiteOpenHelper {
         }
     }
 
-    public String get_raw_data_from_table(String actual_table_name)//used for data backup
+    private void create_table(String table_name,vault_data meta_data,SQLiteDatabase db)//used for restoring data
+    {
+        String query1 = "CREATE TABLE IF NOT EXISTS " + table_name + "(" + id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                account_type_name + " TEXT, " +
+                account_login_id + " TEXT, " +
+                account_password + " TEXT, " +
+                entry_date + " TEXT, " +
+                is_meta_data + " INTEGER, " +
+                vault_name + " TEXT " + ");";
+        db.execSQL(query1);
+        ContentValues values = new ContentValues();
+        values.put(account_type_name, NULL);
+        values.put(account_login_id, NULL);
+        values.put(account_password, meta_data.account_password);
+        values.put(entry_date, meta_data.date_of_modification);
+        values.put(is_meta_data, 1);
+        values.put(vault_name, meta_data.vault_name);
+        db.insert(table_name, null, values);
+    }
+
+    public void restore_backup(ArrayList<vault_data_and_error_status> vault_list)
+    {
+        ContentValues values = new ContentValues();
+        get_table_name_vault_names();
+        SQLiteDatabase db = getWritableDatabase();
+        boolean table_already_present;
+        String currentTableName="",currentVaultName="";
+        for (int a = 0; a < vault_list.size(); a++)
+        {
+            table_already_present=false;
+            int index=-1;
+            for(int b=0;b<table_name_and_vault_name_list.size();b++)
+            {
+                //checking if the particular table is already present or not.
+                if(table_name_and_vault_name_list.get(b)[0].equals(vault_list.get(a).table_name))
+                {
+                    table_already_present=true;
+                    index=b;
+                    currentVaultName=table_name_and_vault_name_list.get(b)[1];
+                    currentTableName=table_name_and_vault_name_list.get(b)[0];
+                    break;
+                }
+                //checking is more some other table has the same vault name as that of the current one.
+                if(table_name_and_vault_name_list.get(b)[1].equals(vault_list.get(a).get_vault_data().get(0).vault_name))
+                {
+                    for(int c=0;c<vault_list.get(a).get_vault_data().size();c++)
+                    {   vault_list.get(a).get_vault_data().get(c).vault_name= vault_list.get(a).get_vault_data().get(c).vault_name+"_"+create_unique_id_based_on_time();}
+                }
+            }
+            if(!table_already_present)
+            {
+                currentTableName=vault_list.get(a).table_name;
+                create_table(currentTableName,vault_list.get(a).get_vault_data().get(0),db);
+            }
+            else//remove the duplicate data
+            {
+                //vault_data_and_error_status temp_data=get_raw_data_from_table_obj(vault_list.get(a).table_name);//encryption switch mechanism can be used here to reuse the function get_data_from_table.
+                boolean changed=false;
+                if(encryption)
+                {   encryption=false;changed=true;}
+                vault_data_and_error_status temp_data=get_data_from_table(index,currentTableName,currentVaultName,null);
+                db = getWritableDatabase();//the above line closes the database so this is required.
+                if(changed)
+                {   changed=false;encryption=true;}
+                if(temp_data.get_data_access_error_code()!=0)
+                {
+                    System.out.println("Vault loading ERROR! Failed to retrieve data from internal database.");
+                    break;
+                }
+                for(int b=temp_data.get_vault_data().size()-1;b>=0;b--)
+                {
+                    for (int c = vault_list.get(a).get_vault_data().size() - 1;c >= 0; c--)
+                    {
+                        if (temp_data.get_vault_data().get(b).id==vault_list.get(a).get_vault_data().get(c).id)
+                        {   vault_list.get(a).delete_data_using_index(c);}
+                    }
+                }
+            }
+            for (int b = 0; b < vault_list.get(a).get_vault_data().size(); b++)
+            {
+                values.put(id, vault_list.get(a).get_vault_data().get(b).id);
+                values.put(account_type_name, vault_list.get(a).get_vault_data().get(b).account_type);
+                values.put(account_login_id, vault_list.get(a).get_vault_data().get(b).account_id);
+                values.put(account_password, vault_list.get(a).get_vault_data().get(b).account_password);
+                values.put(entry_date, vault_list.get(a).get_vault_data().get(b).is_meta_data);
+                values.put(vault_name, vault_list.get(a).get_vault_data().get(b).vault_name);
+                db.insert(currentTableName,null,values);
+                values.clear();
+            }
+        }
+        db.close();
+    }
+
+    private vault_data_and_error_status get_raw_data_from_table_obj(String actual_table_name)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + actual_table_name;
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        ArrayList<vault_data> vault_data_list=new ArrayList<>();
+        while(!c.isAfterLast())
+        {
+            vault_data new_vault_data=new vault_data(c.getInt(c.getColumnIndex(id)),
+                    c.getString(c.getColumnIndex(account_type_name)),
+                    c.getString(c.getColumnIndex(account_login_id)),
+                    c.getString(c.getColumnIndex(account_password)),
+                    c.getString(c.getColumnIndex(entry_date)),
+                    c.getInt(c.getColumnIndex(is_meta_data)),
+                    c.getString(c.getColumnIndex(vault_name)));
+            vault_data_list.add(new_vault_data);
+            c.moveToNext();
+        }
+        vault_data_and_error_status obj=new vault_data_and_error_status(0,vault_data_list);
+        db.close();
+        return obj;
+    }
+
+    public String get_raw_data_from_table_string(String actual_table_name)//used for data backup
     {
         SQLiteDatabase db = getWritableDatabase();
         String data="";
         String query = "SELECT * FROM " + actual_table_name;
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();
-        String header=id+","+account_type_name+","+account_login_id+","+account_password+","+entry_date+","+is_meta_data+","+vault_name+"\n";
+        String header=id+","+account_type_name+","+account_login_id+","+account_password+","+entry_date+","+is_meta_data+","+vault_name+",\n";
         while(!c.isAfterLast())
         {
             String data1=c.getInt(c.getColumnIndex(id))+","+
@@ -321,9 +450,8 @@ public class database_handler extends SQLiteOpenHelper {
                           c.getInt(c.getColumnIndex(is_meta_data))+","+
                           c.getString(c.getColumnIndex(vault_name));
             data1=data1.replace("\n","").replace("\r","");
-            data1=data1+"\n";
+            data1=data1+",\n";
             data=data+data1;
-            System.out.println(data1);
             c.moveToNext();
         }
         data=header+data;
@@ -402,11 +530,15 @@ public class database_handler extends SQLiteOpenHelper {
     public static class vault_data_and_error_status {
 
         private int vault_data_access_error_code;
-        ArrayList<vault_data> vault_data;
+        private ArrayList<vault_data> vault_data;
+        public String table_name;
 
         public ArrayList<vault_data> get_vault_data() {
             return vault_data;
         }
+
+        public void delete_data_using_index(int index)
+        {   vault_data.remove(index);}
 
         public int get_data_access_error_code() {
             return vault_data_access_error_code;

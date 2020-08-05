@@ -28,6 +28,7 @@
             android:background="@drawable/round_textview_grey"
             android:text=""
             android:textAlignment="center"
+            android:gravity="center_vertical|center_horizontal"
             android:textColor="@color/PureRed"
             android:textSize="24sp"/>
     </LinearLayout>

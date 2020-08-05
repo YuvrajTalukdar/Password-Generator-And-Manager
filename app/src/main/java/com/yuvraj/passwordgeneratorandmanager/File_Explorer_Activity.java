@@ -30,14 +30,22 @@ import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.xml.sax.Parser;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 
@@ -82,7 +90,15 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
             public void onClick(View view) {
                 if(save_load_code==0)//load vault file
                 {
-                    load_backup_file(file_name.getText().toString());
+                    int error_code=load_backup_file(file_name.getText().toString());
+                    if(error_code==0)
+                    {   Toast.makeText(getApplicationContext(),"Data from backup file loaded successfully. ", Toast.LENGTH_LONG).show();finish();}
+                    else if(error_code==1)
+                    {   Toast.makeText(getApplicationContext(),"Please select a valid backup file.", Toast.LENGTH_LONG).show();}
+                    else if(error_code==2)
+                    {   Toast.makeText(getApplicationContext(),"Failed to load backup file.",Toast.LENGTH_LONG).show();}
+                    else if(error_code==3)
+                    {   Toast.makeText(getApplicationContext(),"File not found.",Toast.LENGTH_LONG).show();}
                 }
                 else if(save_load_code==1)//save vault file
                 {
@@ -167,29 +183,145 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         setTheme(R.style.AppTheme);//this is for fixing the alert dialog box crash.
     }
 
-    void load_backup_file(String backup_file_name)
-    {}
+    private int add_zip_data_to_database(ArrayList<String> zip_entries,ArrayList<ArrayList<String>> zip_data_entry_wise)
+    {
+        database_handler vault_db=new database_handler(this,true);
+        int count1=0,error_code=0;
+        String temp="";
+        ArrayList<vault_data> vault_data_list=new ArrayList<>();
+        ArrayList<database_handler.vault_data_and_error_status> vault_data_and_error_status_list=new ArrayList<>();
+        for(int a=0;a<zip_entries.size();a++)
+        {
+            if(zip_entries.get(a).equals("META_DATA"))
+            {   continue;}
+            for(int b=1;b<zip_data_entry_wise.get(a).size();b++)//line 0 contains the column names
+            {
+                count1=0;
+                vault_data vaultData=new vault_data();
+                for(int c=0;c<zip_data_entry_wise.get(a).get(b).length();c++)
+                {
+                    if(zip_data_entry_wise.get(a).get(b).charAt(c)==',')
+                    {
+                        if(count1==0)//id
+                        {   vaultData.id=Integer.parseInt(temp);temp="";}
+                        else if(count1==1)//ACCOUNT_TYPE_NAME
+                        {   vaultData.account_type=temp;temp="";}
+                        else if(count1==2)//ACCOUNT_LOGIN_ID
+                        {   vaultData.account_id=temp;temp="";}
+                        else if(count1==3)//PASSWORD
+                        {   vaultData.account_password=temp;temp="";}
+                        else if(count1==4)//ENTRY_DATE
+                        {   vaultData.date_of_modification=temp;temp="";}
+                        else if(count1==5)//IS_META
+                        {   vaultData.is_meta_data=Integer.parseInt(temp);temp="";}
+                        else if(count1==6)//VAULT_NAME
+                        {   vaultData.vault_name=temp;temp="";}
+                        count1++;
+                    }
+                    else
+                    {   temp+=zip_data_entry_wise.get(a).get(b).charAt(c);}
+                }
+                vault_data_list.add(vaultData);
+            }
+            database_handler.vault_data_and_error_status vault=new database_handler.vault_data_and_error_status(0,vault_data_list);
+            vault.table_name=zip_entries.get(a);
+            vault_data_and_error_status_list.add(vault);
+            vault_data_list=new ArrayList<>();
+        }
+        vault_db.restore_backup(vault_data_and_error_status_list);
+        vault_db.close();
+        vault_data_and_error_status_list.clear();
+        return error_code;
+    }
 
-    void backup_data_handler(String zip_file_name)
+    private int load_backup_file(String backup_file_name)
+    {
+        int error_code=0;
+        try
+        {
+            DocumentFile zip_file = curDocumentFile.findFile(backup_file_name);
+            if(zip_file==null)
+            {   error_code=3;}
+            InputStream in1 = getContentResolver().openInputStream(zip_file.getUri());
+            ZipInputStream zip_in1=new ZipInputStream(new BufferedInputStream(in1));
+            ZipEntry entry;
+            ArrayList<ArrayList<String>> zip_data_entry_wise=new ArrayList<>();
+            ArrayList<String> zip_entry_name_list=new ArrayList<>();
+            boolean meta_data_found=false;
+            while((entry=zip_in1.getNextEntry())!=null)
+            {
+                zip_entry_name_list.add(entry.getName());
+                if(entry.getName().equals("META_DATA"))
+                {   meta_data_found=true;}
+            }
+            zip_in1.close();
+            in1.close();
+            InputStream in2 = getContentResolver().openInputStream(zip_file.getUri());
+            ZipInputStream zip_in2=new ZipInputStream((new BufferedInputStream(in2)));
+            if(meta_data_found)
+            {
+                while ((entry = zip_in2.getNextEntry()) != null)
+                {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(zip_in2));
+                    String line;
+                    ArrayList<String> lines=new ArrayList<>();
+                    while ((line = reader.readLine()) != null)
+                    {  lines.add(line);}
+                    zip_data_entry_wise.add(lines);
+                }
+                zip_in2.close();
+                in2.close();
+                error_code=add_zip_data_to_database(zip_entry_name_list,zip_data_entry_wise);//error code is not assigned to this function. In future it may be done.
+                zip_data_entry_wise.clear();
+                zip_entry_name_list.clear();
+            }
+            else
+            {   error_code=1;}
+        }
+        catch(Exception e)
+        {
+            if(error_code!=3)
+            {   error_code=2;}
+            System.out.println("Failed to load backup file.");
+            e.printStackTrace();
+        }
+        return error_code;
+    }
+
+    private String get_date_and_time()
+    {
+        int y= Calendar.getInstance().get(Calendar.YEAR);
+        int m=Calendar.getInstance().get(Calendar.MONTH);
+        int d=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        long t=Calendar.getInstance().getTime().getTime();
+        System.out.println("date_time="+y+"/"+m+"/"+d+"_"+t);
+        return y+"/"+m+"/"+d+"_"+t;
+    }
+
+    private void backup_data_handler(String zip_file_name)
     {
         //getting the meta data from the database and initializing the required database variables.
         database_handler vault_db=new database_handler(this,true);
         ArrayList<String[]> table_name_array_list=vault_db.get_table_name_vault_names();
-        //creating the mete data file.
-
         //compression of data
         try
         {
             curDocumentFile.createFile("",zip_file_name+".zip");
             DocumentFile zip_file=curDocumentFile.findFile(zip_file_name+".zip");
             OutputStream out=getContentResolver().openOutputStream(zip_file.getUri());
+            //creating the mete data file.
+            String meta_data_file_content="no_of_tables,date_for_creation,\n"+table_name_array_list.size()+","+get_date_and_time()+",";
+            ZipEntry entry1=new ZipEntry("META_DATA");
+            entry1.setTime(zip_file.lastModified());
             ZipOutputStream zip_out = new ZipOutputStream(new BufferedOutputStream(out));
+            zip_out.putNextEntry(entry1);
+            zip_out.write(meta_data_file_content.getBytes());
             for(int a=0;a<table_name_array_list.size();a++)
             {
                 ZipEntry entry = new ZipEntry(table_name_array_list.get(a)[0]);
                 entry.setTime(zip_file.lastModified()); // to keep modification time after unzipping
                 zip_out.putNextEntry(entry);
-                zip_out.write(vault_db.get_raw_data_from_table(table_name_array_list.get(a)[0]).getBytes());
+                zip_out.write(vault_db.get_raw_data_from_table_string(table_name_array_list.get(a)[0]).getBytes());
             }
             zip_out.close();
             out.close();

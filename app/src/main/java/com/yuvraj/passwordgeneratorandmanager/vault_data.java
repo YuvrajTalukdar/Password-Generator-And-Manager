@@ -14,4 +14,7 @@ public class vault_data {
         this.is_meta_data=IS_META_DATA;
         this.vault_name=vaultname;
     }
+
+    public vault_data()
+    {}
 }
