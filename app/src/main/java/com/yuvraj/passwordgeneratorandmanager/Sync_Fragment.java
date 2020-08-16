@@ -17,7 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 public class Sync_Fragment extends Fragment {
     public boolean is_signed_in=false;
     public Button sign_in_button;
-    private Button sync_now_button;
+    public Button sync_now_button;
     private Button perform_local_backup;
     private Button load_backup_file;
     private Switch auto_sync_enable;
@@ -38,6 +38,7 @@ public class Sync_Fragment extends Fragment {
         void sign_in_with_google();
         void sign_out();
         void local_backup_restore(int start_code);
+        void sync_now(boolean first_time_sync);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class Sync_Fragment extends Fragment {
         sync_now_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            }
+                listener.sync_now(false);}
         });
 
         perform_local_backup=v.findViewById(R.id.Perform_Local_Backup);

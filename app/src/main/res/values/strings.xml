@@ -49,7 +49,8 @@
     <string name="Perform_Local_Backup">Perform Local Backup</string>
     <string name="Load_Backup_File">Load Backup File</string>
     <string name="sign_in_google">Sign In with Google</string>
-    <string name="sunc_button_text">Sync Now</string>
+    <string name="sync_button_text">Sync Now</string>
+    <string name="syncing">Syncing…</string>
     <string name="AutoSync">Auto Sync</string>
     <string name="sign_in_button_text">Sign In with Google</string>
     <string name="sign_out_button_text">Sign Out</string>

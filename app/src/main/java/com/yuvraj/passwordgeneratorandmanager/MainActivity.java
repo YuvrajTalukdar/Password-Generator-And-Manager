@@ -2,23 +2,31 @@ package com.yuvraj.passwordgeneratorandmanager;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.drive.Drive;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -26,19 +34,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Html;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
@@ -75,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GoogleSignInClient mGoogleSignInClient;
     private DriveServiceHelper mDriveServiceHelper;
     private static final int REQUEST_CODE_SIGN_IN = 100;
+    private int current_fragment_code=-1;
+    private final Executor mExecutor = Executors.newSingleThreadExecutor();//for the sync now thread
+    private java.io.File zip_file;//used by sync_download() function
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,26 +110,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //main activity elements
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        drawer_layout=findViewById(R.id.drawer_layout);
-        navigation_view=findViewById(R.id.navigation_view);
+        drawer_layout = findViewById(R.id.drawer_layout);
+        navigation_view = findViewById(R.id.navigation_view);
 
         navigation_view.setNavigationItemSelectedListener(this);
-        action_bar_toggle=new ActionBarDrawerToggle(this,drawer_layout,toolbar,R.string.open,R.string.close);
+        action_bar_toggle = new ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.open, R.string.close);
         drawer_layout.addDrawerListener(action_bar_toggle);
         navigation_view.setItemIconTintList(null);//for default colour icons
         action_bar_toggle.setDrawerIndicatorEnabled(true);
         action_bar_toggle.syncState();
-        getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
-        deleteVaultDialog=new delete_vault_dialog();
+        deleteVaultDialog = new delete_vault_dialog();
         Window window = getWindow();
-        window.setStatusBarColor(ContextCompat.getColor(this,R.color.DarkGrey));
-        window.setNavigationBarColor(getResources().getColor(R.color.Black,null));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.DarkGrey));
+        window.setNavigationBarColor(getResources().getColor(R.color.Black, null));
         //load default fragment
-        fragment_manager=getSupportFragmentManager();
-        fragment_transaction=fragment_manager.beginTransaction();
-        fragment_transaction.add(R.id.container_fragment,new Key_Generator_Fragment());
-        fragment_transaction.commit();
-
+        if(savedInstanceState!=null)
+        {
+            if(savedInstanceState.getInt("current_fragment_code")==1)
+            {
+                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
+                fragment_manager = getSupportFragmentManager();
+                fragment_manager.beginTransaction().replace(R.id.container_fragment, new Key_Generator_Fragment(), "key_generator_fragment").commit();
+                current_fragment_code=1;
+            }
+            else if (savedInstanceState.getInt("current_fragment_code") == 2)
+            {
+                fragment_manager = getSupportFragmentManager();
+                fragment_manager.beginTransaction().replace(R.id.container_fragment, new Vault_Fragment(), "vaultFragment").commit();
+                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Local Vault" + "</font>"));
+                current_fragment_code=2;
+            }
+            else if (savedInstanceState.getInt("current_fragment_code") == 3)
+            {
+                fragment_manager = getSupportFragmentManager();
+                fragment_manager.beginTransaction().replace(R.id.container_fragment, new Sync_Fragment(), "syncFragment").commit();
+                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Cloud Sync & Local Backup" + "</font>"));
+                current_fragment_code=3;
+            }
+            else if (savedInstanceState.getInt("current_fragment_code") == 4)
+            {
+                fragment_manager=getSupportFragmentManager();
+                fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
+                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "About" + "</font>"));
+                current_fragment_code=4;
+            }
+        }
+        else
+        {
+            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
+            fragment_manager = getSupportFragmentManager();
+            fragment_manager.beginTransaction().replace(R.id.container_fragment, new Key_Generator_Fragment(), "key_generator_fragment").commit();
+            current_fragment_code = 1;
+        }
         //main activity functions
         clipboard=(ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         vault_db=new database_handler(this,true);
@@ -110,6 +169,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //sign in functions
         get_sign_in_status();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        state.putInt("current_fragment_code",current_fragment_code);
+        super.onSaveInstanceState(state);
     }
     //------------------------------------------------------------------------------------sync fragment functions----------------------------------------------------------------------------------------------------
     @Override
@@ -150,6 +214,314 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         materialAlertDialogBuilder.show();
     }
+    private boolean check_internet_connection()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnected();
+    }
+    private boolean isOnline() {
+        try {
+            int timeoutMs = 1500;
+            Socket sock = new Socket();
+            SocketAddress sockaddr = new InetSocketAddress("8.8.8.8", 53);
+
+            sock.connect(sockaddr, timeoutMs);
+            sock.close();
+
+            return true;
+        } catch (IOException e) { return false; }
+    }
+    private String get_date_and_time()
+    {
+        int y= Calendar.getInstance().get(Calendar.YEAR);
+        int m=Calendar.getInstance().get(Calendar.MONTH);
+        int d=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        long t=Calendar.getInstance().getTime().getTime();
+        return y+"_"+m+"_"+d+"_"+t;
+    }
+    private int add_zip_data_to_database(ArrayList<String> zip_entries,ArrayList<ArrayList<String>> zip_data_entry_wise)
+    {
+        database_handler vault_db=new database_handler(this,true);
+        int count1=0,error_code=0;
+        String temp="";
+        ArrayList<vault_data> vault_data_list=new ArrayList<>();
+        ArrayList<database_handler.vault_data_and_error_status> vault_data_and_error_status_list=new ArrayList<>();
+        for(int a=0;a<zip_entries.size();a++)
+        {
+            if(zip_entries.get(a).equals("META_DATA"))
+            {   continue;}
+            for(int b=1;b<zip_data_entry_wise.get(a).size();b++)//line 0 contains the column names
+            {
+                count1=0;
+                vault_data vaultData=new vault_data();
+                for(int c=0;c<zip_data_entry_wise.get(a).get(b).length();c++)
+                {
+                    if(zip_data_entry_wise.get(a).get(b).charAt(c)==',')
+                    {
+                        if(count1==0)//id
+                        {   vaultData.id=Integer.parseInt(temp);temp="";}
+                        else if(count1==1)//ACCOUNT_TYPE_NAME
+                        {   vaultData.account_type=temp;temp="";}
+                        else if(count1==2)//ACCOUNT_LOGIN_ID
+                        {   vaultData.account_id=temp;temp="";}
+                        else if(count1==3)//PASSWORD
+                        {   vaultData.account_password=temp;temp="";}
+                        else if(count1==4)//ENTRY_DATE
+                        {   vaultData.date_of_modification=temp;temp="";}
+                        else if(count1==5)//IS_META
+                        {   vaultData.is_meta_data=Integer.parseInt(temp);temp="";}
+                        else if(count1==6)//VAULT_NAME
+                        {   vaultData.vault_name=temp;temp="";}
+                        count1++;
+                    }
+                    else
+                    {   temp+=zip_data_entry_wise.get(a).get(b).charAt(c);}
+                }
+                vault_data_list.add(vaultData);
+            }
+            database_handler.vault_data_and_error_status vault=new database_handler.vault_data_and_error_status(0,vault_data_list);
+            vault.table_name=zip_entries.get(a);
+            vault_data_and_error_status_list.add(vault);
+            vault_data_list=new ArrayList<>();
+        }
+        vault_db.restore_backup(vault_data_and_error_status_list);
+        vault_db.close();
+        vault_data_and_error_status_list.clear();
+        return error_code;
+    }
+    private java.io.File get_zipped_backup_file(String zip_file_name)//used to create the to be uploaded zip fie
+    {
+        //getting the meta data from the database and initializing the required database variables.
+        database_handler vault_db=new database_handler(this,true);
+        ArrayList<String[]> table_name_array_list=vault_db.get_table_name_vault_names();
+        //compression of data
+        DocumentFile zip_file;
+        java.io.File java_zip_file;
+        try
+        {
+            DocumentFile curDocumentFile=DocumentFile.fromFile( getApplicationContext().getFilesDir());
+            zip_file_name=zip_file_name+get_date_and_time()+".zip";
+            curDocumentFile.createFile("",zip_file_name);
+            zip_file=curDocumentFile.findFile(zip_file_name);
+            java_zip_file=new java.io.File(getApplicationContext().getFilesDir()+"/"+zip_file_name);
+            OutputStream out=getContentResolver().openOutputStream(zip_file.getUri());
+            //creating the mete data file.
+            String meta_data_file_content="no_of_tables,date_for_creation,\n"+table_name_array_list.size()+","+get_date_and_time()+",";
+            ZipEntry entry1=new ZipEntry("META_DATA");
+            entry1.setTime(zip_file.lastModified());
+            ZipOutputStream zip_out = new ZipOutputStream(new BufferedOutputStream(out));
+            zip_out.putNextEntry(entry1);
+            zip_out.write(meta_data_file_content.getBytes());
+            for(int a=0;a<table_name_array_list.size();a++)
+            {
+                ZipEntry entry = new ZipEntry(table_name_array_list.get(a)[0]);
+                entry.setTime(zip_file.lastModified()); // to keep modification time after unzipping
+                zip_out.putNextEntry(entry);
+                zip_out.write(vault_db.get_raw_data_from_table_string(table_name_array_list.get(a)[0]).getBytes());
+            }
+            zip_out.close();
+            out.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println("Failed zip!!");
+            e.printStackTrace();
+            java_zip_file=null;
+        }
+        //clearing of data
+        vault_db.close();
+        table_name_array_list.clear();
+        return java_zip_file;
+    }
+    private int load_backup_file(java.io.File backup_file)
+    {
+        int error_code=0;
+        try
+        {
+            DocumentFile zip_file=DocumentFile.fromFile(backup_file);
+            if(zip_file==null)
+            {   error_code=3;}
+            InputStream in1 = getContentResolver().openInputStream(zip_file.getUri());
+            ZipInputStream zip_in1=new ZipInputStream(new BufferedInputStream(in1));
+            ZipEntry entry;
+            ArrayList<ArrayList<String>> zip_data_entry_wise=new ArrayList<>();
+            ArrayList<String> zip_entry_name_list=new ArrayList<>();
+            boolean meta_data_found=false;
+            while((entry=zip_in1.getNextEntry())!=null)
+            {
+                zip_entry_name_list.add(entry.getName());
+                if(entry.getName().equals("META_DATA"))
+                {   meta_data_found=true;}
+            }
+            zip_in1.close();
+            in1.close();
+            InputStream in2 = getContentResolver().openInputStream(zip_file.getUri());
+            ZipInputStream zip_in2=new ZipInputStream((new BufferedInputStream(in2)));
+            if(meta_data_found)
+            {
+                while ((entry = zip_in2.getNextEntry()) != null)
+                {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(zip_in2));
+                    String line;
+                    ArrayList<String> lines=new ArrayList<>();
+                    while ((line = reader.readLine()) != null)
+                    {  lines.add(line);}
+                    zip_data_entry_wise.add(lines);
+                }
+                zip_in2.close();
+                in2.close();
+                error_code=add_zip_data_to_database(zip_entry_name_list,zip_data_entry_wise);//error code is not assigned to this function. In future it may be done.
+                zip_data_entry_wise.clear();
+                zip_entry_name_list.clear();
+            }
+            else
+            {   error_code=1;}
+        }
+        catch(Exception e)
+        {
+            if(error_code!=3)
+            {   error_code=2;}
+            System.out.println("Failed to load backup file.");
+            e.printStackTrace();
+        }
+        return error_code;
+    }
+    private boolean sync_upload()
+    {
+        try {
+            java.io.File java_zip_file = get_zipped_backup_file("PasswordGeneratorAndManagerBackup");
+            if (java_zip_file != null) {
+                mDriveServiceHelper.uploadFile(java_zip_file.getName(), java_zip_file).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Boolean> task) {
+                        task.getResult();
+                        Toast.makeText(getApplicationContext(), "Sync complete.", Toast.LENGTH_SHORT).show();
+                        if(syncFragment!=null)
+                        {
+                            syncFragment.sync_now_button.setEnabled(true);
+                            syncFragment.sync_now_button.setText(getResources().getText(R.string.sync_button_text));
+                        }
+                    }
+                });
+            }
+            return true;
+        }
+        catch(Exception e)
+        {   e.printStackTrace();return false;}
+    }
+    private boolean sync_download()
+    {
+        System.out.println("Sync_download started!!!!");
+        try
+        {
+            mDriveServiceHelper.queryFiles().addOnCompleteListener(new OnCompleteListener<FileList>() {
+                @Override
+                public void onComplete(@NonNull Task<FileList> task) {
+                    List<File> file_list = task.getResult().getFiles();
+                    if(file_list.size()==0)
+                    {
+                        mDriveServiceHelper.delete_backup_file().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                sync_upload();
+                            }
+                        });
+                    }
+                    for (int a = 0; a < file_list.size(); a++)
+                    {   //the file list should contain only one file
+                        System.out.println("Name=" + file_list.get(a).getName());
+                        if(file_list.get(a).getName().contains("PasswordGeneratorAndManagerBackup") && file_list.get(a).getName().contains(".zip"))
+                        {
+                            ///download the file
+                            System.out.println("Download file");
+                            zip_file=new java.io.File(getApplicationContext().getFilesDir()+"/"+file_list.get(a).getName());
+                            try {
+                                zip_file.createNewFile();
+                                mDriveServiceHelper.downloadFile(zip_file,file_list.get(a).getId()).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Boolean> task) {
+                                        if(task.getResult())
+                                        {
+                                            //load the backup in the database
+                                            int e=load_backup_file(zip_file);
+                                            System.out.println("Error code="+e);
+                                            zip_file.delete();
+                                            mDriveServiceHelper.delete_backup_file().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    sync_upload();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                            catch(Exception e){}
+                            break;
+                        }
+                    }
+                }
+            });
+            return true;
+        }
+        catch(Exception e)
+        {   e.printStackTrace();return false;}
+    }
+    private Task<ArrayList<Boolean>> sync_thread_start(boolean first_time_sync) {
+        return Tasks.call(mExecutor, () ->
+            {
+                //pre task checks
+                boolean internet_available = check_internet_connection(), is_online = false;
+                if (internet_available) {
+                    is_online = isOnline();
+                }
+                if (mDriveServiceHelper == null && is_online) {
+                    initialize_google_drive_service_helper();
+                }
+                if (is_signed_in && mDriveServiceHelper != null && is_online)
+                {
+                    if(first_time_sync)
+                    {   sync_download();}
+                    else
+                    {
+                        mDriveServiceHelper.delete_backup_file().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                sync_upload();
+                            }
+                        });
+                    }
+                }
+                ArrayList<Boolean> status_list=new ArrayList<>();
+                status_list.add(is_online);
+                status_list.add(is_signed_in);
+                return status_list;
+            });
+    }
+    boolean sync_lock=false;
+    @Override
+    public void sync_now(boolean first_time_sync)
+    {
+        if(!sync_lock)
+        {
+            sync_lock=true;
+            syncFragment=(Sync_Fragment)getSupportFragmentManager().findFragmentByTag("syncFragment");
+            syncFragment.sync_now_button.setEnabled(false);
+            syncFragment.sync_now_button.setText(getResources().getText(R.string.syncing));
+            sync_thread_start(first_time_sync).addOnCompleteListener(new OnCompleteListener<ArrayList<Boolean>>() {
+                @Override
+                public void onComplete(@NonNull Task<ArrayList<Boolean>> task) {
+                    ArrayList<Boolean> status_list = task.getResult();
+                    if (!status_list.get(0))//is_online
+                    {   Toast.makeText(getApplicationContext(), "Please check you internet connection.", Toast.LENGTH_SHORT).show(); }
+                    else if (!status_list.get(1))//is_signed_in
+                    {   Toast.makeText(getApplicationContext(), "Please sign in with google first.", Toast.LENGTH_SHORT).show(); }
+                    sync_lock=false;
+                }
+            });
+        }
+    }
     public GoogleSignInAccount get_sign_in_status()
     {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
@@ -160,14 +532,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else
         {   is_signed_in=true;
             System.out.println("Signed in");
-            //get the account obj or something like that
         }
         return account;
     }
     private GoogleSignInClient buildGoogleSignInClient() {
         GoogleSignInOptions signInOptions =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestScopes(Drive.SCOPE_FILE)
+                        .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
                         .requestEmail()
                         .build();
         return GoogleSignIn.getClient(getApplicationContext(), signInOptions);
@@ -179,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
     }
     @Override
-    protected void onActivityResult(int request, int result, Intent data)
+    protected void onActivityResult(int request, int result, Intent data)//for the account selection activity
     {
         System.out.println("request="+request+" result="+result);
         if(data==null)
@@ -202,6 +573,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 syncFragment.check_sign_in_status(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
                 initialize_google_drive_service_helper();
                 Toast.makeText(getApplicationContext(), "Sign in complete.", Toast.LENGTH_SHORT).show();
+                sync_now(true);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -603,6 +975,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Key_Generator_Fragment(),"key_generator_fragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
+            current_fragment_code=1;
             //drawer_layout.closeDrawers();
         }
         else if(menu_item.getItemId()==R.id.vault_item)
@@ -610,16 +983,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Vault_Fragment(),"vaultFragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Local Vault" + "</font>"));
+            current_fragment_code=2;
         }
         else if(menu_item.getItemId()==R.id.backup_item)
         {
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Sync_Fragment(),"syncFragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Cloud Sync & Local Backup" + "</font>"));
+            current_fragment_code=3;
         }
         else if(menu_item.getItemId()==R.id.about_item)
         {
-
+            fragment_manager=getSupportFragmentManager();
+            fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
+            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "About" + "</font>"));
+            current_fragment_code=4;
         }
         return true;
     }

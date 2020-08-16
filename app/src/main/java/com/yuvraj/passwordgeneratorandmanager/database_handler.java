@@ -393,13 +393,13 @@ public class database_handler extends SQLiteOpenHelper {
                     }
                 }
             }
-            for (int b = 0; b < vault_list.get(a).get_vault_data().size(); b++)
+            for (int b = 1; b < vault_list.get(a).get_vault_data().size(); b++)
             {
-                values.put(id, vault_list.get(a).get_vault_data().get(b).id);
                 values.put(account_type_name, vault_list.get(a).get_vault_data().get(b).account_type);
                 values.put(account_login_id, vault_list.get(a).get_vault_data().get(b).account_id);
                 values.put(account_password, vault_list.get(a).get_vault_data().get(b).account_password);
-                values.put(entry_date, vault_list.get(a).get_vault_data().get(b).is_meta_data);
+                values.put(entry_date,vault_list.get(a).get_vault_data().get(b).date_of_modification);
+                values.put(is_meta_data, vault_list.get(a).get_vault_data().get(b).is_meta_data);
                 values.put(vault_name, vault_list.get(a).get_vault_data().get(b).vault_name);
                 db.insert(currentTableName,null,values);
                 values.clear();

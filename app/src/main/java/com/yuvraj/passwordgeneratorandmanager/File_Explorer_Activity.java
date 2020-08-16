@@ -118,8 +118,6 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Window window = getWindow();
-        //window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.DarkGrey));
         window.setNavigationBarColor(getResources().getColor(R.color.Black,null));
 
@@ -328,7 +326,7 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         }
         catch(Exception e)
         {
-            System.out.println("Failed gzip!!");
+            System.out.println("Failed zip!!");
             e.printStackTrace();
         }
         //clearing of data
