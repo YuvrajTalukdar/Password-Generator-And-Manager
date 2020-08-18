@@ -3,7 +3,6 @@ package com.yuvraj.passwordgeneratorandmanager;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.text.Html;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -29,7 +29,7 @@ public class Key_Generator_Fragment extends Fragment {
     private SeekBar pass_length_seekbar;
     private TextView pass_length_textview;
     private Switch switch_az,switch_AZ,switch_09,switch_SPLCHAR;
-    private ConstraintLayout layout1;
+    private LinearLayout layout1;
     public Key_Generator_Fragment() {
         // Required empty public constructor
     }

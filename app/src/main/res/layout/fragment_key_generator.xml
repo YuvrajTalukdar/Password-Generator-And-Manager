@@ -1,224 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/generator_fragment_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="?android:attr/actionBarSize"
+    android:orientation="vertical"
+    android:weightSum="5"
     tools:context=".Key_Generator_Fragment">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/password_edit_text"
-        android:layout_width="315dp"
-        android:layout_height="48dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:backgroundTint="@color/PureGreen"
-        android:gravity="bottom|left"
-        android:textAlignment="gravity"
-        android:textColor="@color/PureRed"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toStartOf="@+id/copy_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/guideline2"
-        app:layout_constraintVertical_bias="0.539"
-        tools:text="test" />
+    <View
+        android:id="@+id/view"
+        android:layout_weight="0.5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
 
-    <ImageButton
-        android:id="@+id/copy_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-
-        android:layout_marginStart="12dp"
-
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="64dp"
-        android:background="@drawable/copy_buttom_style"
-
-        android:contentDescription="@string/Copy_Pass"
-        android:padding="5dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/copy_icon"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/password_edit_text" />
-
-    <SeekBar
-        android:id="@+id/pass_length_seekbar"
-        android:layout_width="315dp"
-        android:layout_height="43dp"
-
-        android:layout_marginTop="4dp"
-        android:backgroundTint="@color/PureGreen"
-
-        android:foregroundTint="@color/PureGreen"
-        android:progressBackgroundTint="@color/PureGreen"
-        android:progressTint="@color/PureGreen"
-        android:thumbTint="@color/Teal"
-        app:layout_constraintEnd_toStartOf="@+id/passlength_textview"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-    <TextView
-        android:id="@+id/passlength_textview"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="4dp"
-        android:text="100"
-        android:textColor="@color/PureRed"
-        android:textColorLink="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/pass_length_seekbar"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-    <Button
-        android:id="@+id/generate_pass_button"
-        android:layout_width="179dp"
-        android:layout_height="48dp"
-
-        android:layout_marginTop="176dp"
-        android:background="@drawable/generate_pass_button_style"
-        android:text="@string/generate"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toStartOf="@+id/add_to_vault_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
-    <Button
-        android:id="@+id/add_to_vault_button"
-        android:layout_width="179dp"
-        android:layout_height="48dp"
-
-        android:layout_marginTop="176dp"
-        android:background="@drawable/generate_pass_button_style"
-        android:text="@string/add_to_vault"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/generate_pass_button"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.4" />
+        android:layout_weight="1"
+        android:weightSum="2"
+        android:gravity="center">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:backgroundTint="@color/PureGreen"
+            android:gravity="bottom|left"
+            android:textAlignment="gravity"
+            android:textColor="@color/PureRed"
+            android:layout_weight="1.8"
+            tools:text="test" />
+
+        <ImageButton
+
+            android:id="@+id/copy_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/copy_buttom_style"
+            android:contentDescription="@string/Copy_Pass"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/copy_icon"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.15" />
+        android:layout_weight="0.5"
+        android:weightSum="2"
+        android:gravity="center">
+        <SeekBar
+            android:id="@+id/pass_length_seekbar"
+            android:layout_width="0dp"
+            android:layout_weight="1.8"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/PureGreen"
+            android:foregroundTint="@color/PureGreen"
+            android:progressBackgroundTint="@color/PureGreen"
+            android:progressTint="@color/PureGreen"
+            android:thumbTint="@color/Teal"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.50" />
+        <TextView
+            android:id="@+id/passlength_textview"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="100"
+            android:gravity="center"
+            android:textColor="@color/PureRed"
+            android:textColorLink="#FFFFFF"
+            android:textSize="24sp"/>
+    </LinearLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.0" />
+        android:layout_weight="2"
+        android:weightSum="3"
+        android:layout_marginTop="40dp"
+        android:gravity="center">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="1" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:text="Password contains these characters"
+            android:textAlignment="center"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/PureGreen"
+            android:textSize="18sp" />
 
-    <Switch
-        android:id="@+id/switch_AZ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layoutDirection="ltr"
-        android:text="@string/AZ"
-        android:textColor="@color/Teal"
-        android:theme="@style/SCBSwitch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/switch_09"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2"
+            android:gravity="center">
 
-    <Switch
-        android:id="@+id/switch_az"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layoutDirection="ltr"
-        android:text="@string/az"
-        android:textColor="@color/Teal"
-        android:theme="@style/SCBSwitch"
-        app:layout_constraintBottom_toTopOf="@+id/add_to_vault_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/switch_SPLCHAR" />
+            <Switch
+                android:id="@+id/switch_AZ"
+                android:layout_marginEnd="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/AZ"
+                android:textColor="@color/Teal"
+                android:theme="@style/SCBSwitch"/>
 
-    <Switch
-        android:id="@+id/switch_09"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layoutDirection="ltr"
-        android:text="@string/text0to9"
-        android:textColor="@color/Teal"
-        android:theme="@style/SCBSwitch"
-        app:layout_constraintEnd_toStartOf="@+id/switch_AZ"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
+            <Switch
+                android:id="@+id/switch_az"
+                android:layout_marginStart="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/az"
+                android:textColor="@color/Teal"
+                android:theme="@style/SCBSwitch"/>
 
-    <Switch
-        android:id="@+id/switch_SPLCHAR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layoutDirection="ltr"
-        android:text="@string/specialchar"
-        android:textColor="@color/Teal"
-        android:theme="@style/SCBSwitch"
-        app:layout_constraintBottom_toTopOf="@+id/generate_pass_button"
-        app:layout_constraintEnd_toStartOf="@+id/switch_az"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="348dp"
-        android:layout_height="46dp"
-        android:text="Password contains these characters"
-        android:textAlignment="center"
-        android:textColor="@color/PureGreen"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="2"
+            android:gravity="center">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <Switch
+                android:id="@+id/switch_09"
+                android:layout_marginEnd="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text0to9"
+                android:textColor="@color/Teal"
+                android:theme="@style/SCBSwitch"/>
+
+            <Switch
+                android:id="@+id/switch_SPLCHAR"
+                android:layout_marginStart="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/specialchar"
+                android:textColor="@color/Teal"
+                android:theme="@style/SCBSwitch"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:weightSum="2"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/generate_pass_button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/generate_pass_button_style"
+            android:text="@string/generate"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/add_to_vault_button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/generate_pass_button_style"
+            android:text="@string/add_to_vault"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+</LinearLayout>

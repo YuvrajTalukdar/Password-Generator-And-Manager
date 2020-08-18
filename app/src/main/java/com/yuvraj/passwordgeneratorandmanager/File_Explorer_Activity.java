@@ -30,8 +30,6 @@ import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import org.xml.sax.Parser;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -145,7 +143,7 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
 
         folder_name_text_view=findViewById(R.id.FolderName1);
 
-        boolean permission_got=requestForPermission();
+        //boolean permission_got=requestForPermission();
         request_root_dir_uri();
 
         recycler_view=findViewById(R.id.file_explorer_recycler_view);

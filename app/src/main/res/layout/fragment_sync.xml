@@ -24,7 +24,9 @@
         android:gravity="center">
         <TextView
             android:id="@+id/account_name_TextView"
-            android:layout_width="379dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/round_textview_grey"
             android:text=""
@@ -38,24 +40,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:layout_weight="1"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:weightSum="2"
         android:gravity="center">
 
         <Button
             android:id="@+id/Sign_In_With_Google_Account"
-            android:layout_width="139dp"
-            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
             android:background="@drawable/generate_pass_button_style"
             android:text="@string/sign_in_google"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="5dp"
             android:textAllCaps="false" />
 
         <Button
             android:id="@+id/sync_now_button"
-            android:layout_width="139dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="5dp"
             android:background="@drawable/generate_pass_button_style"
             android:text="@string/sync_button_text"
             android:textAllCaps="false"/>
@@ -87,24 +95,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="40dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:layout_weight="1"
+        android:weightSum="2"
         android:gravity="center">
         <Button
             android:id="@+id/Perform_Local_Backup"
-            android:layout_width="139dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:background="@drawable/generate_pass_button_style"
             android:text="@string/Perform_Local_Backup"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="5dp"
             android:textAllCaps="false" />
 
         <Button
             android:id="@+id/Load_Backup_file"
-            android:layout_width="139dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:background="@drawable/generate_pass_button_style"
             android:text="@string/Load_Backup_File"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="5dp"
             android:textAllCaps="false" />
     </LinearLayout>
 

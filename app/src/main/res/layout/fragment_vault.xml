@@ -16,13 +16,17 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:layout_weight="0.3"
+        android:weightSum="2"
         android:gravity="center|center_vertical"
         android:background="@color/Black">
 
         <Button
             android:id="@+id/create_vault_button"
-            android:layout_width="179dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
@@ -32,7 +36,8 @@
 
         <Button
             android:id="@+id/delete_vault_button"
-            android:layout_width="179dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginBottom="5dp"
             android:layout_marginStart="5dp"
@@ -81,12 +86,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_weight="0.4"
+        android:weightSum="2"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:gravity="center|center_vertical"
         android:background="@color/Black">
 
         <Button
             android:id="@+id/add_to_vault_button2"
-            android:layout_width="179dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/generate_pass_button_style"
@@ -95,7 +104,8 @@
 
         <Button
             android:id="@+id/open_close_vault_button"
-            android:layout_width="179dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="5dp"
             android:background="@drawable/generate_pass_button_style"
