@@ -157,8 +157,6 @@
                 android:theme="@style/SCBSwitch"/>
 
         </LinearLayout>
-
-
     </LinearLayout>
 
     <LinearLayout

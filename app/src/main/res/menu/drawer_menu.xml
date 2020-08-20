@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/generator_item"
+            android:icon="@drawable/generator_icon"
+            android:title="@string/generator_title" />
+        <item
+            android:id="@+id/vault_item"
+            android:icon="@drawable/vault_icon"
+            android:title="@string/vault" />
+        <item
+            android:id="@+id/backup_item"
+            android:icon="@drawable/synchronize_icon"
+            android:title="@string/backup" />
+        <item
+            android:id="@+id/about_item"
+            android:icon="@drawable/about_icon"
+            android:title="@string/about" />
+    </group>
 
-    <item
-        android:id="@+id/generator_item"
-        android:icon="@drawable/generator_icon"
-        android:title="@string/generator_title" />
-    <item
-        android:id="@+id/vault_item"
-        android:icon="@drawable/vault_icon"
-        android:title="@string/vault" />
-    <item
-        android:id="@+id/backup_item"
-        android:icon="@drawable/synchronize_icon"
-        android:title="@string/backup" />
-    <item
-        android:id="@+id/about_item"
-        android:icon="@drawable/about_icon"
-        android:title="@string/about" />
+    <item android:title="Themes">
+        <menu>
+            <item android:id="@+id/theme_menu_item"
+                  android:title=""
+                  app:showAsAction="always"
+                  app:actionLayout="@layout/theme_menu_item_layout"/>
+        </menu>
+    </item>
+
 </menu>

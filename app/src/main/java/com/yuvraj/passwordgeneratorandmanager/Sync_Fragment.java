@@ -39,6 +39,8 @@ public class Sync_Fragment extends Fragment {
         void sign_out();
         void local_backup_restore(int start_code);
         void sync_now(boolean first_time_sync);
+        void send_auto_sync_click_signal();
+        boolean is_auto_sync_active();
     }
 
     @Override
@@ -79,6 +81,19 @@ public class Sync_Fragment extends Fragment {
             public void onClick(View view) {
                 listener.sync_now(false);}
         });
+        System.out.println("sync_lock===="+main_activity.sync_lock);
+        if(main_activity.sync_lock)
+        {
+            sync_now_button.setEnabled(false);
+            sync_now_button.setTextColor(getResources().getColor(R.color.DarkGrey,null));
+            sync_now_button.setText(getResources().getText(R.string.syncing));
+        }
+        else
+        {
+            sync_now_button.setEnabled(true);
+            sync_now_button.setTextColor(getResources().getColor(R.color.PureRed,null));
+            sync_now_button.setText(R.string.sync_button_text);
+        }
 
         perform_local_backup=v.findViewById(R.id.Perform_Local_Backup);
         perform_local_backup.setOnClickListener(new View.OnClickListener() {
@@ -97,8 +112,16 @@ public class Sync_Fragment extends Fragment {
         });
 
         auto_sync_enable=v.findViewById(R.id.Auto_sync_switch);
-        //check if the app is already signed in
-        //check for rest of the stuff
+        auto_sync_enable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.send_auto_sync_click_signal();
+            }
+        });
+        if(listener.is_auto_sync_active())
+        {   auto_sync_enable.setChecked(true);}
+        else
+        {   auto_sync_enable.setChecked(false);}
         return v;
     }
 

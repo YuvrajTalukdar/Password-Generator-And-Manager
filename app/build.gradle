@@ -39,12 +39,15 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    //glide for getting image
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //rest api
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
@@ -59,7 +62,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
     //new rest try
-    //implementation 'com.android.support:appcompat-v7:23.0.1'
     implementation 'com.google.android.gms:play-services-identity:17.0.0'
     implementation 'com.google.apis:google-api-services-drive:v2-rev105-1.17.0-rc'
     implementation 'com.google.api-client:google-api-client-android:1.26.0'

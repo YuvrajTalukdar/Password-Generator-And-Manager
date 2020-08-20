@@ -65,7 +65,6 @@
             android:background="@drawable/generate_pass_button_style"
             android:contentDescription="@string/back_button"
             android:padding="5dp"
-            android:layout_weight="0.03"
             android:scaleType="fitCenter"
             android:src="@drawable/back_icon"
             android:textAllCaps="false"/>
@@ -96,7 +95,6 @@
             android:id="@+id/new_folder"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_weight="0.03"
             android:background="@drawable/generate_pass_button_style"
             android:contentDescription="@string/new_folder"
             android:padding="5dp"

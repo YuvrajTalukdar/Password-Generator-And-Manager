@@ -5,10 +5,13 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -40,8 +43,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Html;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -54,6 +66,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -102,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int current_fragment_code=-1;
     private final Executor mExecutor = Executors.newSingleThreadExecutor();//for the sync now thread
     private java.io.File zip_file;//used by sync_download() function
+    private SharedPreferences settings_reader;
+    private SharedPreferences.Editor settings_editor;
+    private TextView drawer_header_text_view;
+    private ImageView drawer_header_imageView;
+    public boolean sync_lock=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,15 +185,163 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         vault_db=new database_handler(this,true);
         vault_data_list=new ArrayList<>();
 
+        //auto sync settings
+        //Drawer settings
+        //drawer header element handler
+        View drawer_header_view=navigation_view.inflateHeaderView(R.layout.drawer_header);
+        drawer_header_text_view=(TextView) drawer_header_view.findViewById(R.id.drawer_header_textView);
+        drawer_header_text_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                get_sign_in_status();
+                if(!is_signed_in)
+                {   sign_in_with_google();}
+                else
+                {
+                    PopupMenu  popupMenu = new PopupMenu(MainActivity.this,drawer_header_text_view);
+                    popupMenu.getMenuInflater().inflate(R.menu.drawer_header_menu,popupMenu.getMenu());
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            sign_out();
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
+                }
+            }
+        });
+        drawer_header_imageView=(ImageView)drawer_header_view.findViewById(R.id.drawer_header_imageView);
+        drawer_header_imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                get_sign_in_status();
+                if(!is_signed_in)
+                {   sign_in_with_google();}
+                else
+                {
+                    PopupMenu  popupMenu = new PopupMenu(MainActivity.this,drawer_header_imageView);
+                    popupMenu.getMenuInflater().inflate(R.menu.drawer_header_menu,popupMenu.getMenu());
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            sign_out();
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
+                }
+            }
+        });
+        //Theme settings
+        LinearLayout drawer_item_linear_layout=(LinearLayout)navigation_view.getMenu().findItem(R.id.theme_menu_item).getActionView();
+        Switch dark_mode_switch = drawer_item_linear_layout.findViewById(R.id.dark_mode_switch);
+        dark_mode_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggle_dark_mode();
+            }
+        });
+        CheckBox redScheme =  drawer_item_linear_layout.findViewById(R.id.red_color_scheme);
+        redScheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                color_scheme_changer(0);
+            }
+        });
+        CheckBox greenScheme =  drawer_item_linear_layout.findViewById(R.id.green_color_scheme);
+        greenScheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                color_scheme_changer(1);
+            }
+        });
+        CheckBox greyScheme =  drawer_item_linear_layout.findViewById(R.id.grey_color_scheme);
+        greyScheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                color_scheme_changer(2);
+            }
+        });
+        CheckBox blueScheme =  drawer_item_linear_layout.findViewById(R.id.blue_color_scheme);
+        blueScheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                color_scheme_changer(3);
+            }
+        });
+        CheckBox violetScheme =  drawer_item_linear_layout.findViewById(R.id.violet_color_scheme);
+        violetScheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                color_scheme_changer(4);
+            }
+        });
+        CheckBox pinkScheme =  drawer_item_linear_layout.findViewById(R.id.pink_color_scheme);
+        pinkScheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                color_scheme_changer(5);
+            }
+        });
         //sign in functions
-        get_sign_in_status();
+        GoogleSignInAccount account=get_sign_in_status();
+        if(is_signed_in)
+        {   load_account_image_and_id(account);}
+        else
+        {   reset_account_image_and_id();}
     }
     @Override
     public void onSaveInstanceState(Bundle state) {
         state.putInt("current_fragment_code",current_fragment_code);
         super.onSaveInstanceState(state);
     }
+    //----------------------------------------------------------------------------------------Drawer Layout---------------------------------------------------------------------------------------------------------
+    private void toggle_dark_mode()
+    {
+
+    }
+    private void color_scheme_changer(int color_scheme_code)
+    {
+
+    }
+    private void reset_account_image_and_id()
+    {
+        Glide.with(this).load(R.drawable.person_icon).circleCrop().into(drawer_header_imageView);
+        drawer_header_text_view.setText("Sign In");
+    }
+    private void load_account_image_and_id(GoogleSignInAccount account)
+    {
+        if(is_signed_in) {
+            try {
+                if(account.getPhotoUrl()!=null)
+                {   Glide.with(this).load(account.getPhotoUrl()).circleCrop().into(drawer_header_imageView);}
+                else
+                {   Glide.with(this).load(R.drawable.person_icon).circleCrop().into(drawer_header_imageView);}
+                drawer_header_text_view.setText(account.getDisplayName());
+            }
+            catch(Exception e)
+            { e.printStackTrace();}
+        }
+    }
     //------------------------------------------------------------------------------------sync fragment functions----------------------------------------------------------------------------------------------------
+    @Override
+    public void send_auto_sync_click_signal()
+    {
+        settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        settings_editor = getSharedPreferences("settings",Context.MODE_PRIVATE).edit();
+        if(settings_reader.getBoolean("auto_sync_state", false))
+        {   settings_editor.putBoolean("auto_sync_state", false);}
+        else
+        {   settings_editor.putBoolean("auto_sync_state", true);}
+        settings_editor.apply();///commit()
+    }
+    @Override
+    public boolean is_auto_sync_active()
+    {
+        settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        return settings_reader.getBoolean("auto_sync_state", false);
+    }
     @Override
     public void local_backup_restore(int start_code) {
         final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
@@ -397,11 +563,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onComplete(@NonNull Task<Boolean> task) {
                         task.getResult();
                         Toast.makeText(getApplicationContext(), "Sync complete.", Toast.LENGTH_SHORT).show();
+                        syncFragment = (Sync_Fragment) getSupportFragmentManager().findFragmentByTag("syncFragment");
                         if(syncFragment!=null)
                         {
                             syncFragment.sync_now_button.setEnabled(true);
                             syncFragment.sync_now_button.setText(getResources().getText(R.string.sync_button_text));
                         }
+                        sync_lock=false;
                     }
                 });
             }
@@ -499,16 +667,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return status_list;
             });
     }
-    boolean sync_lock=false;
     @Override
     public void sync_now(boolean first_time_sync)
     {
-        if(!sync_lock)
-        {
-            sync_lock=true;
-            syncFragment=(Sync_Fragment)getSupportFragmentManager().findFragmentByTag("syncFragment");
-            syncFragment.sync_now_button.setEnabled(false);
-            syncFragment.sync_now_button.setText(getResources().getText(R.string.syncing));
+        if(!sync_lock) {
+            sync_lock = true;
+            syncFragment = (Sync_Fragment) getSupportFragmentManager().findFragmentByTag("syncFragment");
+            if (syncFragment != null)
+            {
+                syncFragment.sync_now_button.setEnabled(false);
+                syncFragment.sync_now_button.setText(getResources().getText(R.string.syncing));
+            }
             sync_thread_start(first_time_sync).addOnCompleteListener(new OnCompleteListener<ArrayList<Boolean>>() {
                 @Override
                 public void onComplete(@NonNull Task<ArrayList<Boolean>> task) {
@@ -517,7 +686,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     {   Toast.makeText(getApplicationContext(), "Please check you internet connection.", Toast.LENGTH_SHORT).show(); }
                     else if (!status_list.get(1))//is_signed_in
                     {   Toast.makeText(getApplicationContext(), "Please sign in with google first.", Toast.LENGTH_SHORT).show(); }
-                    sync_lock=false;
                 }
             });
         }
@@ -570,7 +738,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 System.out.println("Sign in successful.");
                 is_signed_in = true;
                 syncFragment = (Sync_Fragment) getSupportFragmentManager().findFragmentByTag("syncFragment");
-                syncFragment.check_sign_in_status(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
+                if(syncFragment!=null)
+                {   syncFragment.check_sign_in_status(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());}
                 initialize_google_drive_service_helper();
                 Toast.makeText(getApplicationContext(), "Sign in complete.", Toast.LENGTH_SHORT).show();
                 sync_now(true);
@@ -594,7 +763,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new GsonFactory(),
                     credential).setApplicationName("AppName").build();
             mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
-            System.out.println("Initialized gdriveServiceHelper.");
+            load_account_image_and_id(account);
         }
     }
     @Override
@@ -615,7 +784,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         System.out.println("Sign out successful.");
                         is_signed_in=false;
                         syncFragment = (Sync_Fragment) getSupportFragmentManager().findFragmentByTag("syncFragment");
-                        syncFragment.check_sign_in_status(null);
+                        if(syncFragment!=null)
+                        {   syncFragment.check_sign_in_status(null);}
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -624,6 +794,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
                 Toast.makeText(getApplicationContext(), "Signed Out of "+account_name, Toast.LENGTH_SHORT).show();
+                reset_account_image_and_id();
             }
         });
         materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -969,14 +1140,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //----------------------------------------------------------------------------------function for drawer window-----------------------------------------------------------------------------------------------------
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menu_item) {
-        drawer_layout.closeDrawer(GravityCompat.START);
+        //drawer_layout.closeDrawer(GravityCompat.START);
         if(menu_item.getItemId()==R.id.generator_item)
         {
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Key_Generator_Fragment(),"key_generator_fragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
             current_fragment_code=1;
-            //drawer_layout.closeDrawers();
+            drawer_layout.closeDrawers();
         }
         else if(menu_item.getItemId()==R.id.vault_item)
         {
@@ -984,6 +1155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Vault_Fragment(),"vaultFragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Local Vault" + "</font>"));
             current_fragment_code=2;
+            drawer_layout.closeDrawers();
         }
         else if(menu_item.getItemId()==R.id.backup_item)
         {
@@ -991,6 +1163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Sync_Fragment(),"syncFragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Cloud Sync & Local Backup" + "</font>"));
             current_fragment_code=3;
+            drawer_layout.closeDrawers();
         }
         else if(menu_item.getItemId()==R.id.about_item)
         {
@@ -998,6 +1171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "About" + "</font>"));
             current_fragment_code=4;
+            drawer_layout.closeDrawers();
         }
         return true;
     }

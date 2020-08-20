@@ -8,6 +8,9 @@
     <string name="about">About</string>
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="theme_layout_heading_text">Themes</string>
+    <string name="theme_layout_switch_text">Dark Mode</string>
+    <string name="drawer_header_text_view">Sign In</string>
     <!-- Strings used for key generator fragment -->
     <string name="generate">Generate</string>
     <string name="add_to_vault">Add to Vault</string>
@@ -64,10 +67,5 @@
     <string name="load_backup_file_dialog_box_message"><![CDATA[<font color=\'#FF0000\'>To load backup file permission is required to read you local storage. Please press ok and select grant permission to proceed further.</font>]]></string>
     <string name="perform_local_backup_dialog_box_message"><![CDATA[<font color=\'#FF0000\'>To perform local backup permission is required to save the backup file in your local storage. Please press ok and select grant permission to proceed further.</font>]]></string>
     <string name="perform_local_backup_dialog_box_title"><![CDATA[<font color=\'#5CEF1C\'>Permission required..</font>]]></string>
-
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
 
 </resources>

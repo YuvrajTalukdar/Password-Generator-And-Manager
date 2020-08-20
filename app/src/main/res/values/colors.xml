@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="PureBlue">#03DAC5</color>
     <color name="DarkGrey">#202022</color>
     <color name="PureGreen">#5CEF1C</color>
     <color name="Teal">#66F9B0</color>
@@ -10,5 +10,7 @@
     <color name="Black">#000000</color>
     <color name="Grey">#252525</color>
     <color name="YellowishGreen">#CDDC39</color>
+    <color name="DeepPink">#FF0E60</color>
+    <color name="PureViolet">#673AB7</color>
     <color name="transparent100">#00000000</color>
 </resources>
