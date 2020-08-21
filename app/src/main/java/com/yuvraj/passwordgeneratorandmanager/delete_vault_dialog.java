@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class delete_vault_dialog extends AppCompatDialogFragment implements AdapterView.OnItemSelectedListener {
     private EditText vault_pass_edit_text;
@@ -90,10 +91,11 @@ public class delete_vault_dialog extends AppCompatDialogFragment implements Adap
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Map<String,Integer> map=listener.get_color_id();
         if(i>0)
-        {   ((TextView)adapterView.getChildAt(0)).setTextColor(getResources().getColor(R.color.PureRed,null));}
+        {   ((TextView)adapterView.getChildAt(0)).setTextColor(map.get("MediumColor"));}
         else
-        {   ((TextView)adapterView.getChildAt(0)).setTextColor(getResources().getColor(R.color.YellowishGreen,null));}
+        {   ((TextView)adapterView.getChildAt(0)).setTextColor(map.get("DeepColor"));}
         spinner_option=i;
     }
 
@@ -104,6 +106,7 @@ public class delete_vault_dialog extends AppCompatDialogFragment implements Adap
     interface delete_vault_dialog_listener
     {
         void delete_vault_dialog(int dialog_option,int error_code,int spinner_position,String password,boolean open_vault_dialog_start,boolean delete_dialog_start,int called_from);
+        Map<String,Integer> get_color_id();
     }
 
     @Override

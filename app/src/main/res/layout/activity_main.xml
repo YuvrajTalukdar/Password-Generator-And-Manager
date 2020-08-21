@@ -5,9 +5,8 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="?attr/backgroundColor"
     tools:context=".MainActivity">
-
 
     <include
         layout="@layout/drawer_toolbar"
@@ -24,14 +23,11 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/Black"
+        android:background="?attr/backgroundColor"
         android:fitsSystemWindows="true"
-        app:itemBackground="@color/Black"
-        app:itemIconTint="@color/Black"
-        app:itemTextColor="@color/PureGreen"
+        app:itemBackground="?attr/backgroundColor"
+        app:itemIconTint="?attr/backgroundColor"
+        app:itemTextColor="?attr/MediumColor"
         app:menu="@menu/drawer_menu">
-
     </com.google.android.material.navigation.NavigationView>
-
-
 </androidx.drawerlayout.widget.DrawerLayout>

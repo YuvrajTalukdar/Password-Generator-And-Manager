@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AnimationUtils;
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,6 +66,7 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.DarkGreenTheme);//this is for fixing the alert dialog box crash.
         setContentView(R.layout.activity_file_explorer);
 
         new_folder_dialog_obj=new new_folder_dialog();
@@ -176,7 +180,6 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         folder_stack.clear();
         if(permission_got)
         {   add_multiple_data_to_recycle_view(root);}*/
-        setTheme(R.style.AppTheme);//this is for fixing the alert dialog box crash.
     }
 
     private int add_zip_data_to_database(ArrayList<String> zip_entries,ArrayList<ArrayList<String>> zip_data_entry_wise)
@@ -332,19 +335,38 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         table_name_array_list.clear();
     }
 
+    private Map<String,Integer> get_color_id()
+    {
+        Map<String,Integer> map=new HashMap<>();
+
+        TypedValue typedValue1 = new TypedValue();
+        getTheme().resolveAttribute(R.attr.DeepColor, typedValue1, true);
+        map.put("DeepColor",ContextCompat.getColor(this, typedValue1.resourceId));
+
+        TypedValue typedValue2 = new TypedValue();
+        getTheme().resolveAttribute(R.attr.MediumColor, typedValue2, true);
+        map.put("MediumColor",ContextCompat.getColor(this, typedValue2.resourceId));
+
+        return map;
+    }
+
     void delete_file_folder_on_click(int data_id,int position)
     {
+        Map<String,Integer> map=get_color_id();
+        String deep_color= String.format("#%06X", (0xFFFFFF & map.get("DeepColor")));
+        String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+        map.clear();
         String file_folder_message="",name="";
         if(directory_data_handlers_list.get(position).is_folder)
         {   file_folder_message="Folder";}
         else
         {   file_folder_message="File";}
         final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color='#5CEF1C'>Delete "+file_folder_message+"..</font>"));
-        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color='#FF0000'>Are you sure you want to delete "+name+"?</font>"));
+        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color="+medium_color+">Delete "+file_folder_message+"..</font>"));
+        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color="+deep_color+">Are you sure you want to delete "+name+"?</font>"));
         materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
 
-        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setPositiveButton(Html.fromHtml("<font color="+medium_color+">Yes</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 boolean ok=false;
@@ -369,7 +391,7 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
                 {   Toast.makeText(getApplicationContext(),"Delete operation failed!", Toast.LENGTH_LONG).show();}
             }
         });
-        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setNegativeButton(Html.fromHtml("<font color="+medium_color+">No</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }

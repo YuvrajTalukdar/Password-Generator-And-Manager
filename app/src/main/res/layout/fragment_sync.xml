@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Online_Backup"
-        android:textColor="@color/PureGreen"
+        android:textColor="?attr/DeepColor"
         android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:textSize="30sp"/>
@@ -32,7 +32,7 @@
             android:text=""
             android:textAlignment="center"
             android:gravity="center_vertical|center_horizontal"
-            android:textColor="@color/PureRed"
+            android:textColor="?attr/MediumColor"
             android:textSize="24sp"/>
     </LinearLayout>
 
@@ -76,8 +76,8 @@
         android:layout_height="40dp"
         android:layoutDirection="ltr"
         android:text="@string/AutoSync"
-        android:textColor="@color/Teal"
-        android:theme="@style/SCBSwitch"
+        android:textColor="?attr/DeepColor"
+        android:theme="@style/SwitchStyle"
         android:layout_weight="0.5"
         android:layout_marginBottom="50dp"/>
 
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Offline_Backup"
-        android:textColor="@color/PureGreen"
+        android:textColor="?attr/DeepColor"
         android:textSize="30sp"
         android:layout_weight="1" />
 

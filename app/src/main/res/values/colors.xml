@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="PureBlue">#03DAC5</color>
-    <color name="DarkGrey">#202022</color>
-    <color name="PureGreen">#5CEF1C</color>
-    <color name="Teal">#66F9B0</color>
-    <color name="PureRed">#FF0000</color>
     <color name="Black">#000000</color>
     <color name="Grey">#252525</color>
+    <color name="DarkGrey">#202022</color>
+    <color name="White">#ffffff</color>
+
+    <color name="DeepBlue">#3E00CB</color>
+    <color name="MediumBlue">#2196F3</color>
+    <color name="LightBlue">#03DAC5</color>
+    <color name="Teal">#66F9B0</color>
+
+    <color name="DarkGreen">#972E9900</color>
+    <color name="MediumGreen">#5CEF1C</color>
+    <color name="LightGreen">#95E868</color>
     <color name="YellowishGreen">#CDDC39</color>
+
+    <color name="DarkRed">#9B0000</color>
+    <color name="MediumRed">#FF0000</color>
+    <color name="LightRed">#E13535</color>
+    <color name="Orange">#ED3F08</color>
+
     <color name="DeepPink">#FF0E60</color>
     <color name="PureViolet">#673AB7</color>
+
     <color name="transparent100">#00000000</color>
 </resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ds">
+        <attr name="backgroundColor" format="color"/>
+        <attr name="InverseBackgroundColor" format="color"/>
+        <attr name="ItemBackgroundColor" format="color"/>
+        <attr name="toolBarColor" format="color"/>
+        <attr name="DeepColor" format="color"/>
+        <attr name="DarkColor" format="color"/>
+        <attr name="MediumColor" format="color"/>
+        <attr name="LightColor" format="color"/>
+    </declare-styleable>
+</resources>

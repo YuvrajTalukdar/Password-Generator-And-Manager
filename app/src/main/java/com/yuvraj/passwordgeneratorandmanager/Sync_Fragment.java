@@ -81,17 +81,16 @@ public class Sync_Fragment extends Fragment {
             public void onClick(View view) {
                 listener.sync_now(false);}
         });
-        System.out.println("sync_lock===="+main_activity.sync_lock);
         if(main_activity.sync_lock)
         {
             sync_now_button.setEnabled(false);
-            sync_now_button.setTextColor(getResources().getColor(R.color.DarkGrey,null));
+            sync_now_button.setTextColor(getResources().getColor(R.color.Grey,null));
             sync_now_button.setText(getResources().getText(R.string.syncing));
         }
         else
         {
             sync_now_button.setEnabled(true);
-            sync_now_button.setTextColor(getResources().getColor(R.color.PureRed,null));
+            sync_now_button.setTextColor(getResources().getColor(R.color.Black,null));
             sync_now_button.setText(R.string.sync_button_text);
         }
 

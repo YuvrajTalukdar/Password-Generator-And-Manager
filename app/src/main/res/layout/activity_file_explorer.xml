@@ -22,9 +22,8 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:layout_weight="2"
-            android:backgroundTint="@color/PureGreen"
-            android:inputType="textPersonName"
-            android:textColor="@color/PureRed" />
+            android:backgroundTint="?attr/LightColor"
+            android:textColor="?attr/MediumColor"/>
         <TextView
             android:id="@+id/zip"
             android:layout_width="wrap_content"
@@ -36,7 +35,7 @@
             android:background="@color/Black"
             android:text=".zip"
             android:textAlignment="center"
-            android:textColor="@color/PureRed"
+            android:textColor="?attr/MediumColor"
             android:textSize="24sp"
             android:gravity="center"/>
         <Button
@@ -87,7 +86,7 @@
                 android:background="@drawable/round_textview_grey"
                 android:text="test"
                 android:textAlignment="center"
-                android:textColor="@color/PureRed"
+                android:textColor="?attr/MediumColor"
                 android:textSize="24sp"
                 android:gravity="center"/>
         </HorizontalScrollView>

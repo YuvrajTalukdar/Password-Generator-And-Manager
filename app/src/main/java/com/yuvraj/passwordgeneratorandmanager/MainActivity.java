@@ -32,8 +32,10 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -43,6 +45,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,8 +72,12 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -120,10 +127,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView drawer_header_text_view;
     private ImageView drawer_header_imageView;
     public boolean sync_lock=false;
+    private CheckBox redScheme,greenScheme,greyScheme,blueScheme,violetScheme,pinkScheme;
+    private boolean dark_mode_on=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.DarkRedTheme_NoActionBar);
         setContentView(R.layout.activity_main);
         //main activity elements
         toolbar = findViewById(R.id.toolbar);
@@ -144,9 +154,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //load default fragment
         if(savedInstanceState!=null)
         {
+            Map<String,Integer> map=get_color_id();
+            String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+            map.clear();
             if(savedInstanceState.getInt("current_fragment_code")==1)
             {
-                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
+                getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Password Generator" + "</font>"));
                 fragment_manager = getSupportFragmentManager();
                 fragment_manager.beginTransaction().replace(R.id.container_fragment, new Key_Generator_Fragment(), "key_generator_fragment").commit();
                 current_fragment_code=1;
@@ -155,27 +168,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             {
                 fragment_manager = getSupportFragmentManager();
                 fragment_manager.beginTransaction().replace(R.id.container_fragment, new Vault_Fragment(), "vaultFragment").commit();
-                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Local Vault" + "</font>"));
+                getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Local Vault" + "</font>"));
                 current_fragment_code=2;
             }
             else if (savedInstanceState.getInt("current_fragment_code") == 3)
             {
                 fragment_manager = getSupportFragmentManager();
                 fragment_manager.beginTransaction().replace(R.id.container_fragment, new Sync_Fragment(), "syncFragment").commit();
-                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Cloud Sync & Local Backup" + "</font>"));
+                getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Cloud Sync & Local Backup" + "</font>"));
                 current_fragment_code=3;
             }
             else if (savedInstanceState.getInt("current_fragment_code") == 4)
             {
                 fragment_manager=getSupportFragmentManager();
                 fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
-                getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "About" + "</font>"));
+                getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "About" + "</font>"));
                 current_fragment_code=4;
             }
         }
         else
         {
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
+            Map<String,Integer> map=get_color_id();
+            String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+            map.clear();
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Password Generator" + "</font>"));
             fragment_manager = getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment, new Key_Generator_Fragment(), "key_generator_fragment").commit();
             current_fragment_code = 1;
@@ -242,42 +258,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 toggle_dark_mode();
             }
         });
-        CheckBox redScheme =  drawer_item_linear_layout.findViewById(R.id.red_color_scheme);
+        redScheme =  drawer_item_linear_layout.findViewById(R.id.red_color_scheme);
         redScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 color_scheme_changer(0);
             }
         });
-        CheckBox greenScheme =  drawer_item_linear_layout.findViewById(R.id.green_color_scheme);
+        greenScheme =  drawer_item_linear_layout.findViewById(R.id.green_color_scheme);
         greenScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 color_scheme_changer(1);
             }
         });
-        CheckBox greyScheme =  drawer_item_linear_layout.findViewById(R.id.grey_color_scheme);
+        greyScheme =  drawer_item_linear_layout.findViewById(R.id.grey_color_scheme);
         greyScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 color_scheme_changer(2);
             }
         });
-        CheckBox blueScheme =  drawer_item_linear_layout.findViewById(R.id.blue_color_scheme);
+        blueScheme =  drawer_item_linear_layout.findViewById(R.id.blue_color_scheme);
         blueScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 color_scheme_changer(3);
             }
         });
-        CheckBox violetScheme =  drawer_item_linear_layout.findViewById(R.id.violet_color_scheme);
+        violetScheme =  drawer_item_linear_layout.findViewById(R.id.violet_color_scheme);
         violetScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 color_scheme_changer(4);
             }
         });
-        CheckBox pinkScheme =  drawer_item_linear_layout.findViewById(R.id.pink_color_scheme);
+        pinkScheme =  drawer_item_linear_layout.findViewById(R.id.pink_color_scheme);
         pinkScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -296,14 +312,91 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         state.putInt("current_fragment_code",current_fragment_code);
         super.onSaveInstanceState(state);
     }
+
     //----------------------------------------------------------------------------------------Drawer Layout---------------------------------------------------------------------------------------------------------
+    @Override
+    public Map<String,Integer> get_color_id()
+    {
+        Map<String,Integer> map=new HashMap<>();
+
+        TypedValue typedValue1 = new TypedValue();
+        getTheme().resolveAttribute(R.attr.DeepColor, typedValue1, true);
+        map.put("DeepColor",ContextCompat.getColor(this, typedValue1.resourceId));
+
+        TypedValue typedValue2 = new TypedValue();
+        getTheme().resolveAttribute(R.attr.MediumColor, typedValue2, true);
+        map.put("MediumColor",ContextCompat.getColor(this, typedValue2.resourceId));
+
+        return map;
+    }
     private void toggle_dark_mode()
     {
 
     }
     private void color_scheme_changer(int color_scheme_code)
     {
+        /*if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES)
+        {
 
+        }*/
+
+        if(dark_mode_on && color_scheme_code==0)//red
+        {
+            redScheme.setChecked(true);
+            greenScheme.setChecked(false);
+            greyScheme.setChecked(false);
+            blueScheme.setChecked(false);
+            violetScheme.setChecked(false);
+            pinkScheme.setChecked(false);
+            setTheme(R.style.DarkRedTheme);
+            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(i);
+        }
+        else if(dark_mode_on && color_scheme_code==1)//red
+        {
+            redScheme.setChecked(false);
+            greenScheme.setChecked(true);
+            greyScheme.setChecked(false);
+            blueScheme.setChecked(false);
+            violetScheme.setChecked(false);
+            pinkScheme.setChecked(false);
+        }
+        else if(dark_mode_on && color_scheme_code==2)
+        {
+            redScheme.setChecked(false);
+            greenScheme.setChecked(false);
+            greyScheme.setChecked(true);
+            blueScheme.setChecked(false);
+            violetScheme.setChecked(false);
+            pinkScheme.setChecked(false);
+        }
+        else if(dark_mode_on && color_scheme_code==3)
+        {
+            redScheme.setChecked(false);
+            greenScheme.setChecked(false);
+            greyScheme.setChecked(false);
+            blueScheme.setChecked(true);
+            violetScheme.setChecked(false);
+            pinkScheme.setChecked(false);
+        }
+        else if(dark_mode_on && color_scheme_code==4)
+        {
+            redScheme.setChecked(false);
+            greenScheme.setChecked(false);
+            greyScheme.setChecked(false);
+            blueScheme.setChecked(false);
+            violetScheme.setChecked(true);
+            pinkScheme.setChecked(false);
+        }
+        else if(dark_mode_on && color_scheme_code==5)
+        {
+            redScheme.setChecked(false);
+            greenScheme.setChecked(false);
+            greyScheme.setChecked(false);
+            blueScheme.setChecked(false);
+            violetScheme.setChecked(false);
+            pinkScheme.setChecked(true);
+        }
     }
     private void reset_account_image_and_id()
     {
@@ -344,20 +437,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public void local_backup_restore(int start_code) {
+        Map<String,Integer> map=get_color_id();
+        String deep_color= String.format("#%06X", (0xFFFFFF & map.get("DeepColor")));
+        String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+        map.clear();
         final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
         if (start_code == 1)//perform local backup
         {
-            materialAlertDialogBuilder.setTitle(Html.fromHtml(getString(R.string.perform_local_backup_dialog_box_title)));
-            materialAlertDialogBuilder.setMessage(Html.fromHtml(getString(R.string.perform_local_backup_dialog_box_message)));
+            materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color="+medium_color+">Permission required..</font>"));
+            materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color="+deep_color+">To perform local backup permission is required to save the backup file in your local storage. Please press ok and select grant permission to proceed further.</font>"));
         }
         else if(start_code==2)//load backup file
         {
-            materialAlertDialogBuilder.setTitle(Html.fromHtml(getString(R.string.perform_local_backup_dialog_box_title)));//both the title are same
-            materialAlertDialogBuilder.setMessage(Html.fromHtml(getString(R.string.load_backup_file_dialog_box_message)));
+            materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color="+medium_color+">Permission required..</font>"));//both the title are same
+            materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color="+deep_color+">To load backup file permission is required to read you local storage. Please press ok and select grant permission to proceed further.</font>"));
         }
         materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
 
-        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setPositiveButton(Html.fromHtml("<font color="+medium_color+">Yes</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (start_code == 1) {
@@ -373,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setNegativeButton(Html.fromHtml("<font color="+medium_color+">No</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -771,10 +868,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         String account_name=GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail();
         final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
-        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color='#5CEF1C'>Sign Out</font>"));
-        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color='#FF0000'>Are you sure you want to sign out?</font>"));
+        Map<String,Integer> map=get_color_id();
+        String deep_color= String.format("#%06X", (0xFFFFFF & map.get("DeepColor")));
+        String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+        map.clear();
+        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color="+medium_color+">Sign Out</font>"));
+        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color="+deep_color+">Are you sure you want to sign out?</font>"));
         materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
-        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setPositiveButton(Html.fromHtml("<font color="+medium_color+">Yes</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 mGoogleSignInClient=buildGoogleSignInClient();
@@ -797,7 +898,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 reset_account_image_and_id();
             }
         });
-        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setNegativeButton(Html.fromHtml("<font color="+medium_color+">No</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -817,18 +918,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 enter_new_password_dialog(0);
             }
             else {
+                Map<String,Integer> map=get_color_id();
+                String deep_color= String.format("#%06X", (0xFFFFFF & map.get("DeepColor")));
+                String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+                map.clear();
                 final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
-                materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color='#5CEF1C'>Vault not opened..</font>"));
-                materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color='#FF0000'>You need to open a vault to save the generated password.</font>"));
+                materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color="+medium_color+">Vault not opened..</font>"));
+                materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color="+deep_color+">You need to open a vault to save the generated password.</font>"));
                 materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
 
-                materialAlertDialogBuilder.setPositiveButton("Open Vault", new DialogInterface.OnClickListener() {
+                materialAlertDialogBuilder.setPositiveButton(Html.fromHtml("<font color="+medium_color+">Open Vault</font>"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         open_vault_dialog(0);
                     }
                 });
-                materialAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                materialAlertDialogBuilder.setNegativeButton(Html.fromHtml("<font color="+medium_color+">Cancel</font>"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -1012,12 +1117,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void delete_data_button_onclick(int data_id,int position)
     {
         data_id_1=data_id;position1=position;
+        Map<String,Integer> map=get_color_id();
+        String deep_color= String.format("#%06X", (0xFFFFFF & map.get("DeepColor")));
+        String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+        map.clear();
         final MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
-        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color='#5CEF1C'>Delete data..</font>"));
-        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color='#FF0000'>Do you really wan to delete the data?</font>"));
+        materialAlertDialogBuilder.setTitle(Html.fromHtml("<font color="+medium_color+">Delete data..</font>"));
+        materialAlertDialogBuilder.setMessage(Html.fromHtml("<font color="+deep_color+">Do you really wan to delete the data?</font>"));
         materialAlertDialogBuilder.setBackground(getDrawable(R.drawable.grey_background));
 
-        materialAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setPositiveButton(Html.fromHtml("<font color="+medium_color+">Yes</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 vaultFragment=(Vault_Fragment)getSupportFragmentManager().findFragmentByTag("vaultFragment");
@@ -1035,7 +1144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(getApplicationContext(), "Data deleted.", Toast.LENGTH_SHORT).show();
             }
         });
-        materialAlertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        materialAlertDialogBuilder.setNegativeButton(Html.fromHtml("<font color="+medium_color+">No</font>"), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -1140,12 +1249,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //----------------------------------------------------------------------------------function for drawer window-----------------------------------------------------------------------------------------------------
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menu_item) {
+        Map<String,Integer> map=get_color_id();
+        String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+        map.clear();
         //drawer_layout.closeDrawer(GravityCompat.START);
         if(menu_item.getItemId()==R.id.generator_item)
         {
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Key_Generator_Fragment(),"key_generator_fragment").commit();
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Password Generator" + "</font>"));
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Password Generator" + "</font>"));
             current_fragment_code=1;
             drawer_layout.closeDrawers();
         }
@@ -1153,7 +1265,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Vault_Fragment(),"vaultFragment").commit();
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Local Vault" + "</font>"));
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Local Vault" + "</font>"));
             current_fragment_code=2;
             drawer_layout.closeDrawers();
         }
@@ -1161,7 +1273,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment,new Sync_Fragment(),"syncFragment").commit();
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Cloud Sync & Local Backup" + "</font>"));
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Cloud Sync & Local Backup" + "</font>"));
             current_fragment_code=3;
             drawer_layout.closeDrawers();
         }
@@ -1169,7 +1281,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "About" + "</font>"));
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "About" + "</font>"));
             current_fragment_code=4;
             drawer_layout.closeDrawers();
         }

@@ -2,12 +2,11 @@
 <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/Black"
+    android:background="?attr/backgroundColor"
     android:gravity="fill"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:padding="10dp"
-    android:textAlignment="center"
-    android:textColor="@color/YellowishGreen"
+    android:textColor="?attr/DeepColor"
     android:textSize="18sp">
-
+    <!-- android:textAlignment="center" -->
 </CheckedTextView>
