@@ -1,40 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_header"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:orientation="vertical"
-    android:gravity="center"
-    android:background="@drawable/drawer_header_background">
+    android:gravity="center">
+    <ImageView
+        android:id="@+id/headerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:orientation="vertical"
         android:gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <ImageView
-            android:id="@+id/drawer_header_imageView"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/circular_image_view_background"
-            android:padding="3dp"/>
+            <ImageView
+                android:id="@+id/drawer_header_imageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/circular_image_view_background"
+                android:padding="3dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/drawer_header_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/drawer_header_text_view"
+            android:textColor="?attr/MediumColor"
+            android:textAlignment="center"
+            android:background="@drawable/round_textview_grey"
+            android:textSize="18sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/drawer_header_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="5dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="@string/drawer_header_text_view"
-        android:textColor="?attr/MediumColor"
-        android:textAlignment="center"
-        android:background="@drawable/round_textview_grey"
-        android:textSize="18sp" />
-
-
-</LinearLayout>
+</RelativeLayout>

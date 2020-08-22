@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
+        android:layout_marginBottom="20dp"
         android:weightSum="4"
         android:layout_gravity="center"
         android:gravity="center"
@@ -30,7 +31,7 @@
             android:textColor="?attr/MediumColor"
             android:textSize="24sp" />
     </LinearLayout>
-
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -45,7 +46,7 @@
             android:text="@string/theme_layout_switch_text"
             android:theme="@style/SwitchStyle"/>
     </LinearLayout>
-
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -111,14 +112,14 @@
             android:layout_marginEnd="20dp"
             android:button="@null"
             android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:background="@color/PureViolet"
+            android:background="@color/MediumViolet"
             android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/pink_color_scheme"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@color/DeepPink"
+            android:background="@color/MediumPink"
             android:button="@null"
             android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
             android:layout_weight="1" />

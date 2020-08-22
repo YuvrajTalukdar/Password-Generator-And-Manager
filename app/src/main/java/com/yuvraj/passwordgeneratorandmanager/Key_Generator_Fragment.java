@@ -3,9 +3,11 @@ package com.yuvraj.passwordgeneratorandmanager;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Key_Generator_Fragment extends Fragment {
@@ -43,6 +47,7 @@ public class Key_Generator_Fragment extends Fragment {
     {
         void on_copied_pass_sent(CharSequence pass);
         void add_to_vault_button(String generated_pass);
+        Map<String,Integer> get_color_id();
     }
 
     @Override
@@ -137,7 +142,10 @@ public class Key_Generator_Fragment extends Fragment {
         }
         else
         {
-            Snackbar.make(layout1, Html.fromHtml("<font color=\"#5CEF1C\">Please select some character....</font>"),Snackbar.LENGTH_LONG).show();
+            Map<String,Integer> map=listener.get_color_id();
+            String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+            map.clear();
+            Snackbar.make(layout1, Html.fromHtml("<font color="+medium_color+">Please select some character....</font>"),Snackbar.LENGTH_LONG).show();
         }
         return string_buff.toString();
     }

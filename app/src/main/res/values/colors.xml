@@ -2,26 +2,36 @@
 <resources>
     <color name="Black">#000000</color>
     <color name="Grey">#252525</color>
-    <color name="DarkGrey">#202022</color>
-    <color name="White">#ffffff</color>
-
+    <!-- Blue Color Scheme -->
     <color name="DeepBlue">#3E00CB</color>
-    <color name="MediumBlue">#2196F3</color>
-    <color name="LightBlue">#03DAC5</color>
+    <color name="MediumBlue">#03DAC5</color>
+    <color name="LightBlue">#4CD6C9</color>
     <color name="Teal">#66F9B0</color>
-
+    <!-- Green Color Scheme -->
     <color name="DarkGreen">#972E9900</color>
     <color name="MediumGreen">#5CEF1C</color>
     <color name="LightGreen">#95E868</color>
     <color name="YellowishGreen">#CDDC39</color>
-
+    <!-- Red Color Scheme -->
     <color name="DarkRed">#9B0000</color>
     <color name="MediumRed">#FF0000</color>
     <color name="LightRed">#E13535</color>
     <color name="Orange">#ED3F08</color>
-
-    <color name="DeepPink">#FF0E60</color>
-    <color name="PureViolet">#673AB7</color>
+    <!-- Grey Color Scheme -->
+    <color name="DarkGrey">#202022</color>
+    <color name="MediumGrey">#92FFF7F7</color>
+    <color name="LightGrey">#D2DBD5D5</color>
+    <color name="White">#ffffff</color>
+    <!-- Violet Color Scheme -->
+    <color name="DarkViolet">#3A059B</color>
+    <color name="MediumViolet">#6738B9</color>
+    <color name="LightViolet">#774FC1</color>
+    <color name="PinkishViolet">#662D89</color>
+    <!-- Pink Color Scheme -->
+    <color name="DarkPink">#9B0538</color>
+    <color name="MediumPink">#FF0E60</color>
+    <color name="LightPink">#DB316B</color>
+    <color name="ReddishPink">#E20C2C</color>
 
     <color name="transparent100">#00000000</color>
 </resources>

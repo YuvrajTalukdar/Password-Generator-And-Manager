@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -32,10 +31,8 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -46,11 +43,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Html;
 import android.util.TypedValue;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -69,15 +64,12 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -128,13 +120,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView drawer_header_imageView;
     public boolean sync_lock=false;
     private CheckBox redScheme,greenScheme,greyScheme,blueScheme,violetScheme,pinkScheme;
+    ArrayList<CheckBox> checkBox_List=new ArrayList<>();
     private boolean dark_mode_on=true;
+    private int current_color_scheme=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.DarkRedTheme_NoActionBar);
+
+        settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        color_scheme_changer(settings_reader.getInt("color_scheme_code", 1),true);
+        current_color_scheme=settings_reader.getInt("color_scheme_code", 1);
         setContentView(R.layout.activity_main);
+
         //main activity elements
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -249,63 +247,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+        ImageView headerBackground=drawer_header_view.findViewById(R.id.headerBackground);
+        Glide.with(this).load(R.drawable.drawer_header_background).into(headerBackground);
         //Theme settings
         LinearLayout drawer_item_linear_layout=(LinearLayout)navigation_view.getMenu().findItem(R.id.theme_menu_item).getActionView();
-        Switch dark_mode_switch = drawer_item_linear_layout.findViewById(R.id.dark_mode_switch);
+        /*Switch dark_mode_switch = drawer_item_linear_layout.findViewById(R.id.dark_mode_switch);
         dark_mode_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle_dark_mode();
             }
         });
+        dark_mode_switch.setVisibility(View.GONE);*/
         redScheme =  drawer_item_linear_layout.findViewById(R.id.red_color_scheme);
         redScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_scheme_changer(0);
+                color_scheme_changer(0,false);
             }
         });
         greenScheme =  drawer_item_linear_layout.findViewById(R.id.green_color_scheme);
         greenScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_scheme_changer(1);
+                color_scheme_changer(1,false);
             }
         });
         greyScheme =  drawer_item_linear_layout.findViewById(R.id.grey_color_scheme);
         greyScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_scheme_changer(2);
+                color_scheme_changer(2,false);
             }
         });
         blueScheme =  drawer_item_linear_layout.findViewById(R.id.blue_color_scheme);
         blueScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_scheme_changer(3);
+                color_scheme_changer(3,false);
             }
         });
         violetScheme =  drawer_item_linear_layout.findViewById(R.id.violet_color_scheme);
         violetScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_scheme_changer(4);
+                color_scheme_changer(4,false);
             }
         });
         pinkScheme =  drawer_item_linear_layout.findViewById(R.id.pink_color_scheme);
         pinkScheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                color_scheme_changer(5);
+                color_scheme_changer(5,false);
             }
         });
+        checkBox_List.add(redScheme);
+        checkBox_List.add(greenScheme);
+        checkBox_List.add(greyScheme);
+        checkBox_List.add(blueScheme);
+        checkBox_List.add(violetScheme);
+        checkBox_List.add(pinkScheme);
         //sign in functions
         GoogleSignInAccount account=get_sign_in_status();
         if(is_signed_in)
         {   load_account_image_and_id(account);}
         else
         {   reset_account_image_and_id();}
+
+        change_ui_element_based_on_theme(settings_reader.getInt("color_scheme_code", 1));
     }
     @Override
     public void onSaveInstanceState(Bundle state) {
@@ -333,70 +342,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
 
     }
-    private void color_scheme_changer(int color_scheme_code)
+    private void change_ui_element_based_on_theme(int color_scheme_code)
     {
-        /*if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES)
+        for(int a=0;a<checkBox_List.size();a++)
         {
-
-        }*/
-
-        if(dark_mode_on && color_scheme_code==0)//red
+            if(a==color_scheme_code)
+            {   checkBox_List.get(a).setChecked(true);}
+            else
+            {   checkBox_List.get(a).setChecked(false);}
+        }
+    }
+    private void save_color_scheme_settings(int color_scheme)
+    {
+        settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        settings_editor = getSharedPreferences("settings",Context.MODE_PRIVATE).edit();
+        settings_editor.putInt("color_scheme_code", color_scheme);
+        settings_editor.apply();///commit()
+    }
+    private void color_scheme_changer(int color_scheme_code,boolean first_start)
+    {
+        if(!first_start && current_color_scheme!=color_scheme_code)
         {
-            redScheme.setChecked(true);
-            greenScheme.setChecked(false);
-            greyScheme.setChecked(false);
-            blueScheme.setChecked(false);
-            violetScheme.setChecked(false);
-            pinkScheme.setChecked(false);
-            setTheme(R.style.DarkRedTheme);
+            save_color_scheme_settings(color_scheme_code);
             Intent i = new Intent(getApplicationContext(),MainActivity.class);
             startActivity(i);
         }
-        else if(dark_mode_on && color_scheme_code==1)//red
-        {
-            redScheme.setChecked(false);
-            greenScheme.setChecked(true);
-            greyScheme.setChecked(false);
-            blueScheme.setChecked(false);
-            violetScheme.setChecked(false);
-            pinkScheme.setChecked(false);
-        }
-        else if(dark_mode_on && color_scheme_code==2)
-        {
-            redScheme.setChecked(false);
-            greenScheme.setChecked(false);
-            greyScheme.setChecked(true);
-            blueScheme.setChecked(false);
-            violetScheme.setChecked(false);
-            pinkScheme.setChecked(false);
-        }
-        else if(dark_mode_on && color_scheme_code==3)
-        {
-            redScheme.setChecked(false);
-            greenScheme.setChecked(false);
-            greyScheme.setChecked(false);
-            blueScheme.setChecked(true);
-            violetScheme.setChecked(false);
-            pinkScheme.setChecked(false);
-        }
-        else if(dark_mode_on && color_scheme_code==4)
-        {
-            redScheme.setChecked(false);
-            greenScheme.setChecked(false);
-            greyScheme.setChecked(false);
-            blueScheme.setChecked(false);
-            violetScheme.setChecked(true);
-            pinkScheme.setChecked(false);
-        }
-        else if(dark_mode_on && color_scheme_code==5)
-        {
-            redScheme.setChecked(false);
-            greenScheme.setChecked(false);
-            greyScheme.setChecked(false);
-            blueScheme.setChecked(false);
-            violetScheme.setChecked(false);
-            pinkScheme.setChecked(true);
-        }
+        else if(!first_start && current_color_scheme==color_scheme_code)
+        {   checkBox_List.get(color_scheme_code).setChecked(true);}
+        if(color_scheme_code==0 && first_start)
+        {   setTheme(R.style.DarkRedTheme_NoActionBar);}
+        else if(color_scheme_code==1 && first_start)
+        {    setTheme(R.style.DarkGreenTheme_NoActionBar);}
+        else if(color_scheme_code==2 && first_start)
+        {   setTheme(R.style.DarkGreyTheme_NoActionBar);}
+        else if(color_scheme_code==3 && first_start)
+        {   setTheme(R.style.DarkBlueTheme_NoActionBar);}
+        else if(color_scheme_code==4 && first_start)
+        {   setTheme(R.style.DarkVioletTheme_NoActionBar);}
+        else if(color_scheme_code==5 && first_start)
+        {   setTheme(R.style.DarkPinkTheme_NoActionBar);}
     }
     private void reset_account_image_and_id()
     {

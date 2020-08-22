@@ -1,8 +1,10 @@
 package com.yuvraj.passwordgeneratorandmanager;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -63,10 +65,13 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
     private Stack<DocumentFile> DocumentFile_stack=new Stack<>();
     private new_folder_dialog new_folder_dialog_obj;
     private int save_load_code;
+    private SharedPreferences settings_reader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.DarkGreenTheme);//this is for fixing the alert dialog box crash.
+
+        settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        color_scheme_changer(settings_reader.getInt("color_scheme_code", 1));
         setContentView(R.layout.activity_file_explorer);
 
         new_folder_dialog_obj=new new_folder_dialog();
@@ -75,16 +80,20 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         file_name=findViewById(R.id.file_name);
         Button save_load_button=findViewById(R.id.save_load_button);
         String start_motive = getIntent().getStringExtra("file_explorer_intent_start_motive");
+
+        Map<String,Integer> map=get_color_id();
+        String medium_color=String.format("#%06X", (0xFFFFFF & map.get("MediumColor")));
+        map.clear();
         if(start_motive.equals("load_file"))
         {
             save_load_button.setText(R.string.Load_Vault_File);
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Load Backup File" + "</font>"));
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Load Backup File" + "</font>"));
             save_load_code=0;
         }
         else if(start_motive.equals("backup_file"))
         {
             save_load_button.setText(R.string.Backup_Vaults);
-            getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#5CEF1C\">" + "Backup Data" + "</font>"));
+            getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Backup Data" + "</font>"));
             save_load_code=1;
         }
         save_load_button.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +189,22 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         folder_stack.clear();
         if(permission_got)
         {   add_multiple_data_to_recycle_view(root);}*/
+    }
+
+    private void color_scheme_changer(int color_scheme_code)
+    {
+        if(color_scheme_code==0)
+        {   setTheme(R.style.DarkRedTheme);}
+        else if(color_scheme_code==1)
+        {    setTheme(R.style.DarkGreenTheme);}
+        else if(color_scheme_code==2)
+        {   setTheme(R.style.DarkGreyTheme);}
+        else if(color_scheme_code==3)
+        {   setTheme(R.style.DarkBlueTheme);}
+        else if(color_scheme_code==4)
+        {   setTheme(R.style.DarkVioletTheme);}
+        else if(color_scheme_code==5)
+        {   setTheme(R.style.DarkPinkTheme);}
     }
 
     private int add_zip_data_to_database(ArrayList<String> zip_entries,ArrayList<ArrayList<String>> zip_data_entry_wise)

@@ -18,6 +18,11 @@
         <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
     </style>
+    <style name="DarkGreenTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
     <!--  Application dark theme, red scheme. -->
     <style name="DarkRedTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Basic dark theme here. -->
@@ -37,10 +42,110 @@
         <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
     </style>
+    <style name="DarkRedTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
     <!--  Application dark theme, grey scheme. -->
+    <style name="DarkGreyTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Basic dark theme here. -->
+        <item name="android:windowBackground">@color/Black</item>
+        <item name="backgroundColor">@color/Black</item>
+        <item name="InverseBackgroundColor">@color/White</item>
+        <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="toolBarColor">@color/Grey</item>
+        <item name="colorSurface">@color/Grey</item>
+        <!-- Basic color scheme here. -->
+        <item name="DeepColor">@color/White</item>
+        <item name="MediumColor">@color/MediumGrey</item>
+        <item name="DarkColor">@color/DarkGrey</item>
+        <item name="LightColor">@color/LightGrey</item>
+        <!-- Specific element styles here. -->
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
+    </style>
+    <style name="DarkGreyTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
     <!--  Application dark theme, blue scheme. -->
+    <style name="DarkBlueTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Basic dark theme here. -->
+        <item name="android:windowBackground">@color/Black</item>
+        <item name="backgroundColor">@color/Black</item>
+        <item name="InverseBackgroundColor">@color/White</item>
+        <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="toolBarColor">@color/Grey</item>
+        <item name="colorSurface">@color/Grey</item>
+        <!-- Basic color scheme here. -->
+        <item name="DeepColor">@color/Teal</item>
+        <item name="MediumColor">@color/MediumBlue</item>
+        <item name="DarkColor">@color/DeepBlue</item>
+        <item name="LightColor">@color/LightBlue</item>
+        <!-- Specific element styles here. -->
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
+    </style>
+    <style name="DarkBlueTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
     <!--  Application dark theme, violet scheme. -->
+    <style name="DarkVioletTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Basic dark theme here. -->
+        <item name="android:windowBackground">@color/Black</item>
+        <item name="backgroundColor">@color/Black</item>
+        <item name="InverseBackgroundColor">@color/White</item>
+        <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="toolBarColor">@color/Grey</item>
+        <item name="colorSurface">@color/Grey</item>
+        <!-- Basic color scheme here. -->
+        <item name="DeepColor">@color/PinkishViolet</item>
+        <item name="MediumColor">@color/MediumViolet</item>
+        <item name="DarkColor">@color/DarkViolet</item>
+        <item name="LightColor">@color/LightViolet</item>
+        <!-- Specific element styles here. -->
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
+    </style>
+    <style name="DarkVioletTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
     <!--  Application dark theme, pink scheme. -->
+    <style name="DarkPinkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Basic dark theme here. -->
+        <item name="android:windowBackground">@color/Black</item>
+        <item name="backgroundColor">@color/Black</item>
+        <item name="InverseBackgroundColor">@color/White</item>
+        <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="toolBarColor">@color/Grey</item>
+        <item name="colorSurface">@color/Grey</item>
+        <!-- Basic color scheme here. -->
+        <item name="DeepColor">@color/ReddishPink</item>
+        <item name="MediumColor">@color/MediumPink</item>
+        <item name="DarkColor">@color/DarkPink</item>
+        <item name="LightColor">@color/LightPink</item>
+        <!-- Specific element styles here. -->
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
+    </style>
+    <style name="DarkPinkTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+
+    <!--  Other component styles -->
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:popupBackground">?attr/backgroundColor</item>
         <item name="android:textColor">?attr/MediumColor</item>
@@ -53,30 +158,15 @@
         <item name="android:textColor">?attr/MediumColor</item>
         <item name="android:textSize">15sp</item>
     </style>
-
-    <style name="DarkGreenTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:fitsSystemWindows">true</item>
-    </style>
-    <style name="DarkRedTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:fitsSystemWindows">true</item>
-    </style>
-
-    <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="colorAccent">@android:color/holo_red_dark</item>
-        <item name="android:textColorPrimary">@android:color/holo_red_dark</item>
-    </style>
-
-
     <style name="SwitchStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Switch theme -->
         <item name="colorControlActivated">?attr/LightColor</item> <!-- active thumb & track color (30% transparency) -->
         <item name="colorSwitchThumbNormal">#ffffff</item> <!-- inactive thumb color -->
         <item name="android:colorForeground">#ffffff</item><!-- inactive track color (30% transparency) -->
         <item name="android:textColor">?attr/DeepColor</item>
+    </style>
+
+    <!-- Dummy Style required by certain java functions -->
+    <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 </resources>
