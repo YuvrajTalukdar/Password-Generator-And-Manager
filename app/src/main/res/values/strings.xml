@@ -64,4 +64,9 @@
     <string name="Backup_Vaults">Backup Vaults</string>
     <string name="back_button">Back Button</string>
     <string name="new_folder">New Folder</string>
+    <!-- Strings for about dialog -->
+    <string name="github_link">https://github.com/YuvrajTalukdar/Password-Generator-And-Manager</string>
+    <string name="about_description">For more information and also help the project: <a href="https://github.com/YuvrajTalukdar/Password-Generator-And-Manager">https://github.com/YuvrajTalukdar/Password-Generator-And-Manager</a>  \n\nPassword Generator and Manager is a Free as in Freedom software for managing and generating you passwords for Android 6.0+.\n\nPassword Generator and Manager is released under the terms of GNU General Public License v3 (GPLv3): <a href="http://www.gnu.org/licenses/gpl-3.0.html">http://www.gnu.org/licenses/gpl-3.0.html</a>\n\nIcons by Icons8: <a href="https://icons8.com"> https://icons8.com </a></string>
+    <string name="version_1_0">Version 1.0</string>
+    <string name="password_generator_and_manager">Password Generator and Manager</string>
 </resources>

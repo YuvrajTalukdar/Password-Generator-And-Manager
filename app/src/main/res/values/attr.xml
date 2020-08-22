@@ -4,6 +4,7 @@
         <attr name="backgroundColor" format="color"/>
         <attr name="InverseBackgroundColor" format="color"/>
         <attr name="ItemBackgroundColor" format="color"/>
+        <attr name="ItemBackgroundColor2" format="color"/>
         <attr name="toolBarColor" format="color"/>
         <attr name="DeepColor" format="color"/>
         <attr name="DarkColor" format="color"/>

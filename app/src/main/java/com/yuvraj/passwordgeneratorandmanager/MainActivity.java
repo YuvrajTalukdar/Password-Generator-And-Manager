@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                                create_vault_dialog.create_vault_dialog_listener,
                                                                delete_vault_dialog.delete_vault_dialog_listener,
                                                                enter_new_pass_dialog.enter_new_pass_dialog_listener,
-                                                               Sync_Fragment.sync_fragment_listener{
+                                                               Sync_Fragment.sync_fragment_listener,
+                                                               about_dialog.about_dialog_listener{
 
     //android ready_made resource
     DrawerLayout drawer_layout;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private enter_new_pass_dialog enterNewPassDialog;
     private create_vault_dialog createVaultDialog;
     private delete_vault_dialog deleteVaultDialog;
+    private about_dialog aboutDialog;
     private ArrayList<String[]> table_name_and_vault_name_list;
     private boolean vault_open=false;
     public boolean delete_dialog_start=false,open_vault_dialog_start=false;
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         action_bar_toggle.setDrawerIndicatorEnabled(true);
         action_bar_toggle.syncState();
         deleteVaultDialog = new delete_vault_dialog();
+        aboutDialog = new about_dialog();
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.DarkGrey));
         window.setNavigationBarColor(getResources().getColor(R.color.Black, null));
@@ -175,13 +178,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment_manager.beginTransaction().replace(R.id.container_fragment, new Sync_Fragment(), "syncFragment").commit();
                 getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Cloud Sync & Local Backup" + "</font>"));
                 current_fragment_code=3;
-            }
-            else if (savedInstanceState.getInt("current_fragment_code") == 4)
-            {
-                fragment_manager=getSupportFragmentManager();
-                fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
-                getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "About" + "</font>"));
-                current_fragment_code=4;
             }
         }
         else
@@ -321,7 +317,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         state.putInt("current_fragment_code",current_fragment_code);
         super.onSaveInstanceState(state);
     }
-
+    //-----------------------------------------------------------------------------------------About Dialog---------------------------------------------------------------------------------------------------------
+    @Override
+    public void about_dialog_ok()
+    {   aboutDialog.dismiss();}
     //----------------------------------------------------------------------------------------Drawer Layout---------------------------------------------------------------------------------------------------------
     @Override
     public Map<String,Integer> get_color_id()
@@ -1263,11 +1262,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else if(menu_item.getItemId()==R.id.about_item)
         {
-            fragment_manager=getSupportFragmentManager();
+            /*fragment_manager=getSupportFragmentManager();
             fragment_manager.beginTransaction().replace(R.id.container_fragment, new About_Fragment(), "aboutFragment").commit();
             getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "About" + "</font>"));
-            current_fragment_code=4;
+            current_fragment_code=4;*/
             drawer_layout.closeDrawers();
+            aboutDialog.show(getSupportFragmentManager(),"aboutDialog");
         }
         return true;
     }

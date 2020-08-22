@@ -6,6 +6,7 @@
         <item name="backgroundColor">@color/Black</item>
         <item name="InverseBackgroundColor">@color/White</item>
         <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="ItemBackgroundColor2">@color/DarkGrey</item>
         <item name="toolBarColor">@color/Grey</item>
         <item name="colorSurface">@color/Grey</item>
         <!-- Basic color scheme here. -->
@@ -30,6 +31,7 @@
         <item name="backgroundColor">@color/Black</item>
         <item name="InverseBackgroundColor">@color/White</item>
         <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="ItemBackgroundColor2">@color/DarkGrey</item>
         <item name="toolBarColor">@color/Grey</item>
         <item name="colorSurface">@color/Grey</item>
         <!-- Basic color scheme here. -->
@@ -54,6 +56,7 @@
         <item name="backgroundColor">@color/Black</item>
         <item name="InverseBackgroundColor">@color/White</item>
         <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="ItemBackgroundColor2">@color/DarkGrey</item>
         <item name="toolBarColor">@color/Grey</item>
         <item name="colorSurface">@color/Grey</item>
         <!-- Basic color scheme here. -->
@@ -78,6 +81,7 @@
         <item name="backgroundColor">@color/Black</item>
         <item name="InverseBackgroundColor">@color/White</item>
         <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="ItemBackgroundColor2">@color/DarkGrey</item>
         <item name="toolBarColor">@color/Grey</item>
         <item name="colorSurface">@color/Grey</item>
         <!-- Basic color scheme here. -->
@@ -102,6 +106,7 @@
         <item name="backgroundColor">@color/Black</item>
         <item name="InverseBackgroundColor">@color/White</item>
         <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="ItemBackgroundColor2">@color/DarkGrey</item>
         <item name="toolBarColor">@color/Grey</item>
         <item name="colorSurface">@color/Grey</item>
         <!-- Basic color scheme here. -->
@@ -126,6 +131,7 @@
         <item name="backgroundColor">@color/Black</item>
         <item name="InverseBackgroundColor">@color/White</item>
         <item name="ItemBackgroundColor">@color/Grey</item>
+        <item name="ItemBackgroundColor2">@color/DarkGrey</item>
         <item name="toolBarColor">@color/Grey</item>
         <item name="colorSurface">@color/Grey</item>
         <!-- Basic color scheme here. -->
@@ -164,7 +170,11 @@
         <item name="android:colorForeground">#ffffff</item><!-- inactive track color (30% transparency) -->
         <item name="android:textColor">?attr/DeepColor</item>
     </style>
-
+    <!-- Theme change animation. Currently it is not being used. -->
+    <style name="ThemeChangeTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
     <!-- Dummy Style required by certain java functions -->
     <style name="CustomDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowBackground">@android:color/black</item>
