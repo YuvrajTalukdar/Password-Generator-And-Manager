@@ -131,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
-        color_scheme_changer(settings_reader.getInt("color_scheme_code", 1),true);
-        current_color_scheme=settings_reader.getInt("color_scheme_code", 1);
+        color_scheme_changer(settings_reader.getInt("color_scheme_code", 3),true);
+        current_color_scheme=settings_reader.getInt("color_scheme_code", 3);
         setContentView(R.layout.activity_main);
 
         //main activity elements
@@ -311,6 +311,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {   reset_account_image_and_id();}
 
         change_ui_element_based_on_theme(settings_reader.getInt("color_scheme_code", 1));
+        //handling auto sync
+        if(settings_reader.getBoolean("auto_sync_state", false) && is_signed_in)
+        {   sync_now(false);}
     }
     @Override
     public void onSaveInstanceState(Bundle state) {
@@ -481,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String get_date_and_time()
     {
         int y= Calendar.getInstance().get(Calendar.YEAR);
-        int m=Calendar.getInstance().get(Calendar.MONTH);
+        int m=Calendar.getInstance().get(Calendar.MONTH)+1;
         int d=Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         long t=Calendar.getInstance().getTime().getTime();
         return y+"_"+m+"_"+d+"_"+t;

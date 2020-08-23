@@ -71,7 +71,7 @@ public class File_Explorer_Activity extends AppCompatActivity implements new_fol
         super.onCreate(savedInstanceState);
 
         settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
-        color_scheme_changer(settings_reader.getInt("color_scheme_code", 1));
+        color_scheme_changer(settings_reader.getInt("color_scheme_code", 3));
         setContentView(R.layout.activity_file_explorer);
 
         new_folder_dialog_obj=new new_folder_dialog();
