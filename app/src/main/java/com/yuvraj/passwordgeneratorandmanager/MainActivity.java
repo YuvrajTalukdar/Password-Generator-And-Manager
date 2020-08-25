@@ -768,9 +768,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onComplete(@NonNull Task<ArrayList<Boolean>> task) {
                     ArrayList<Boolean> status_list = task.getResult();
                     if (!status_list.get(0))//is_online
-                    {   Toast.makeText(getApplicationContext(), "Please check you internet connection.", Toast.LENGTH_SHORT).show(); }
+                    {
+                        Toast.makeText(getApplicationContext(), "Please check you internet connection.", Toast.LENGTH_SHORT).show();
+                        if(syncFragment!=null) {
+                            syncFragment.sync_now_button.setEnabled(true);
+                            syncFragment.sync_now_button.setText(getResources().getText(R.string.sync_button_text));
+                        }
+                        sync_lock=false;
+                    }
                     else if (!status_list.get(1))//is_signed_in
-                    {   Toast.makeText(getApplicationContext(), "Please sign in with google first.", Toast.LENGTH_SHORT).show(); }
+                    {
+                        Toast.makeText(getApplicationContext(), "Please sign in with google first.", Toast.LENGTH_SHORT).show();
+                        if(syncFragment!=null) {
+                            syncFragment.sync_now_button.setEnabled(true);
+                            syncFragment.sync_now_button.setText(getResources().getText(R.string.sync_button_text));
+                        }
+                        sync_lock=false;
+                    }
                 }
             });
         }
