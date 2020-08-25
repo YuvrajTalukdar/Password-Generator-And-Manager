@@ -132,7 +132,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         settings_reader = getSharedPreferences("settings", Context.MODE_PRIVATE);
         color_scheme_changer(settings_reader.getInt("color_scheme_code", 3),true);
+        save_color_scheme_settings(settings_reader.getInt("color_scheme_code",3));
         current_color_scheme=settings_reader.getInt("color_scheme_code", 3);
+
         setContentView(R.layout.activity_main);
 
         //main activity elements

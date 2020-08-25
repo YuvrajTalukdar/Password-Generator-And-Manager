@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
+
+import com.bumptech.glide.Glide;
 
 public class about_dialog extends AppCompatDialogFragment {
 
@@ -27,6 +30,8 @@ public class about_dialog extends AppCompatDialogFragment {
                 listener.about_dialog_ok();
             }
         });
+        ImageView app_icon=view.findViewById(R.id.appIconImageView);
+        Glide.with(this).load(R.drawable.app_icon).into(app_icon);
 
         return builder.create();
     }

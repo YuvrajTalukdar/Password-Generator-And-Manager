@@ -32,6 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_marginTop="10dp"
+            android:inputType="text"
+            android:digits="0123456789qwertzuiopasdfghjklyxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM-_ "
             android:backgroundTint="?attr/LightColor"
             android:gravity="start"
             android:hint="@string/EnterVaultName"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:adroid="http://schemas.android.com/apk/distribution"
     package="com.yuvraj.passwordgeneratorandmanager">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -10,21 +11,23 @@
     <uses-permission android:name = "android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/app_icon_foreground"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/app_icon_round"
+        android:logo="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/DarkGreenTheme">
         <activity
             android:name=".File_Explorer_Activity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing">
         </activity>
 
         <activity
             android:name=".MainActivity"
             android:theme="@style/DarkGreenTheme.NoActionBar"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -27,7 +27,7 @@
     <string name="delete_vault">Delete Vault</string>
     <!-- Create new vault dialog box strings -->
     <string name="CreateNewVault">Create New Vault...</string>
-    <string name="EnterVaultName">Enter Vault Name</string>
+    <string name="EnterVaultName">Enter Vault Name(A-Z,a-z,0-9,-,_,space)</string>
     <string name="EnterPass">Enter Password</string>
     <string name="ConfirmPass">Confirm Password</string>
     <string name="vault_not_opened_status">Open a vault to display its data.</string>

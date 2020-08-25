@@ -31,8 +31,7 @@
         <ImageView
             android:id="@+id/appIconImageView"
             android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/drawer_header_background"/>
+            android:layout_height="70dp"/>
         <TextView
             android:id="@+id/about_under_icon_textView"
             android:layout_width="match_parent"
