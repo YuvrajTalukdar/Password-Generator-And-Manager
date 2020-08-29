@@ -13,6 +13,8 @@ Key Features:-
 
 5. Password Generator and Manager is free as in freedom and covered under GPLv3.
 
+Play store link- https://play.google.com/store/apps/details?id=com.yuvraj.passwordgeneratorandmanager
+
 Icons used inside the app (excluding the main app icon) are from Icon8.
 Icon8- https://icons8.com/
 
