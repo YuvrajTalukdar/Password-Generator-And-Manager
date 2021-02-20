@@ -15,6 +15,10 @@
             android:icon="@drawable/synchronize_icon"
             android:title="@string/backup" />
         <item
+            android:id="@+id/change_vault_password_item"
+            android:icon="@drawable/change_pass_icon"
+            android:title="@string/edit_pass" />
+        <item
             android:id="@+id/about_item"
             android:icon="@drawable/about_icon"
             android:title="@string/about" />

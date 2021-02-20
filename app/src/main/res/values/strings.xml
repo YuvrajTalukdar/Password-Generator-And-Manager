@@ -5,6 +5,7 @@
     <string name="generator_title">Password Generator</string>
     <string name="vault">Local Vault</string>
     <string name="backup">Cloud Sync &amp; Local Backup</string>
+    <string name="edit_pass">Change Vault Password</string>
     <string name="about">About</string>
     <string name="open">open</string>
     <string name="close">close</string>
@@ -69,4 +70,10 @@
     <string name="about_description">For more information and also help the project: <a href="https://github.com/YuvrajTalukdar/Password-Generator-And-Manager">https://github.com/YuvrajTalukdar/Password-Generator-And-Manager</a>  \n\nPassword Generator and Manager is a Free as in Freedom software for managing and generating your passwords for Android 6.0+.\n\nPassword Generator and Manager is released under the terms of GNU General Public License v3 (GPLv3): <a href="http://www.gnu.org/licenses/gpl-3.0.html">http://www.gnu.org/licenses/gpl-3.0.html</a>\n\nIcons by Icons8: <a href="https://icons8.com"> https://icons8.com </a></string>
     <string name="version_1_0">Version 1.0</string>
     <string name="password_generator_and_manager">Password Generator and Manager</string>
+    <!--change pass dialog strings-->
+    <string name="change_pass_dialog_title">Change Vault Password</string>
+    <string name="current_pass_hint">Enter Current Passowrd</string>
+    <string name="new_pass1_hint">Enter New Password</string>
+    <string name="new_pass2_hint">Confirm New Password</string>
+
 </resources>

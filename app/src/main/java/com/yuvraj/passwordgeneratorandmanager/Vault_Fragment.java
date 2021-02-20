@@ -90,12 +90,6 @@ public class Vault_Fragment extends Fragment {
             }
         });
 
-        enable_add_button(main_activity.is_a_vault_open());
-        if(main_activity.is_a_vault_open())
-        {   open_close_vault.setText("Close Vault");}
-        else
-        {   open_close_vault.setText("Open Vault");}
-
         vault_item_recycler_view=v.findViewById(R.id.recyclerView);
         vault_data_list = new ArrayList();
         vault_data_list.clear();
@@ -138,6 +132,20 @@ public class Vault_Fragment extends Fragment {
             main_activity.pending_data_entry=false;
             add_single_data_to_recycle_view(main_activity.pending_data);
             delete_vault.setEnabled(false);
+        }
+
+        enable_add_button(main_activity.is_a_vault_open());
+        if(main_activity.is_a_vault_open())
+        {   open_close_vault.setText("Close Vault");}
+        else
+        {
+            open_close_vault.setText("Open Vault");
+
+            enable_add_button(false);
+            enable_delete_vault_button(true);
+            if(vault_data_list!=null && vault_data_list.size()>0)
+            {   vault_data_list.clear();}
+            empty_recycler_view();
         }
         return v;
     }

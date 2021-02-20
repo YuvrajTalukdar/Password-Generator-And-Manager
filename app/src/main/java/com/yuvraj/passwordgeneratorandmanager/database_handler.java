@@ -8,12 +8,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static java.sql.Types.NULL;
 
@@ -30,6 +35,7 @@ public class database_handler extends SQLiteOpenHelper {
     //vault_locking mechanism
     private String current_password="",current_table_name="",current_vault_name="";
     private boolean vault_open=false;
+    private final Executor mExecutor = Executors.newSingleThreadExecutor();
 
     public database_handler(@Nullable Context context,boolean encryption_enabled) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -147,17 +153,13 @@ public class database_handler extends SQLiteOpenHelper {
 
     private String get_particular_table_metadata(SQLiteDatabase db,String table_actual_name,String column_name)//done and checked
     {
-        Cursor c=db.rawQuery("SELECT * FROM "+table_actual_name,null);
+        Cursor c=db.rawQuery("SELECT * FROM "+table_actual_name+" WHERE "+id+" = (SELECT MIN("+id+") FROM "+table_actual_name+")",null);
         c.moveToFirst();
         String data=new String();
         while(!c.isAfterLast())
         {
-            if(c.getInt(c.getColumnIndex(id))==1)
-            {
-                data=c.getString(c.getColumnIndex(column_name));
-                break;
-            }
-            c.moveToNext();
+            data=c.getString(c.getColumnIndex(column_name));
+            break;
         }
         c.close();
         return data;
@@ -528,7 +530,7 @@ public class database_handler extends SQLiteOpenHelper {
     public static class vault_data_and_error_status {
 
         private int vault_data_access_error_code;
-        private ArrayList<vault_data> vault_data;
+        public ArrayList<vault_data> vault_data;
         public String table_name;
 
         public ArrayList<vault_data> get_vault_data() {
@@ -549,5 +551,48 @@ public class database_handler extends SQLiteOpenHelper {
 
         public vault_data_and_error_status()
         {}
+    }
+
+    public Task<Integer> change_vault_password(int id,String table_name,String encrypted_pass, String current_pass, String new_pass)
+    {
+        return Tasks.call(mExecutor, () ->{
+            //check if password is correct
+            if(!aes_handler.decrypt(encrypted_pass,current_pass).get_decryption_success_status())
+            {   return 1;}
+            //getting the current data
+            vault_data_and_error_status data;
+            data=get_raw_data_from_table_obj(table_name);
+            //deleting the data from the table
+            SQLiteDatabase db =getWritableDatabase();
+            db.execSQL("DELETE FROM "+table_name);
+            // modify te encrypted data
+            ContentValues values = new ContentValues();
+            for(int a=0;a<data.vault_data.size();a++)
+            {
+                if(a==0)
+                {
+                    values.put(account_type_name, data.vault_data.get(a).account_type);
+                    values.put(account_login_id, data.vault_data.get(a).account_id);
+                }
+                else
+                {
+                    values.put(account_type_name,aes_handler.encrypt(aes_handler.decrypt(data.vault_data.get(a).account_type,current_pass).get_decrypted_data(),new_pass));
+                    values.put(account_login_id,aes_handler.encrypt(aes_handler.decrypt(data.vault_data.get(a).account_id,current_pass).get_decrypted_data(),new_pass));
+                }
+                values.put(account_password,aes_handler.encrypt(aes_handler.decrypt(data.vault_data.get(a).account_password,current_pass).get_decrypted_data(),new_pass));
+
+                values.put(entry_date,data.vault_data.get(a).date_of_modification);
+                values.put(is_meta_data,data.vault_data.get(a).is_meta_data);
+                values.put(vault_name, data.vault_data.get(a).vault_name);
+                db.insert(table_name,null,values);
+                values.clear();
+            }
+            data.vault_data.clear();
+            db.close();
+            //add the data to the data base
+
+            close_vault();
+            return 0;
+        });
     }
 }

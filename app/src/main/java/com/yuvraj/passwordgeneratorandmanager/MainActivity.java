@@ -85,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                                delete_vault_dialog.delete_vault_dialog_listener,
                                                                enter_new_pass_dialog.enter_new_pass_dialog_listener,
                                                                Sync_Fragment.sync_fragment_listener,
-                                                               about_dialog.about_dialog_listener{
+                                                               about_dialog.about_dialog_listener,
+                                                               change_pass_dialog.change_pass_dialog_listener{
 
     //android ready_made resource
     DrawerLayout drawer_layout;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private create_vault_dialog createVaultDialog;
     private delete_vault_dialog deleteVaultDialog;
     private about_dialog aboutDialog;
+    private change_pass_dialog changePassDialog;
     private ArrayList<String[]> table_name_and_vault_name_list;
     private boolean vault_open=false;
     public boolean delete_dialog_start=false,open_vault_dialog_start=false;
@@ -151,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         action_bar_toggle.syncState();
         deleteVaultDialog = new delete_vault_dialog();
         aboutDialog = new about_dialog();
+        changePassDialog = new change_pass_dialog();
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.DarkGrey));
         window.setNavigationBarColor(getResources().getColor(R.color.Black, null));
@@ -322,6 +325,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         state.putInt("current_fragment_code",current_fragment_code);
         super.onSaveInstanceState(state);
     }
+    //-----------------------------------------------------------------------------------------Change Password Dialog---------------------------------------------------------------------------------------------------------
+
+    @Override
+    public void change_pass_dialog(int error_code, int spinner_position, String current_password, String new_password) {
+        switch(error_code){
+            case 0: //
+                vault_open=false;
+                vault_db.close_vault();
+                System.out.println("spinner id="+spinner_position);
+                vault_db.change_vault_password(spinner_position-1,table_name_and_vault_name_list.get(spinner_position-1)[0],table_name_and_vault_name_list.get(spinner_position-1)[2],current_password,new_password).addOnCompleteListener(new OnCompleteListener<Integer>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Integer> task) {
+                        if(task.getResult()==1)
+                        {   Toast.makeText(getApplicationContext(), "Incorrect password.", Toast.LENGTH_SHORT).show();}
+                        else if(task.getResult()==0)
+                        {   Toast.makeText(getApplicationContext(), "Vault password changed.", Toast.LENGTH_SHORT).show();
+                            changePassDialog.dismiss();
+                            try{
+                                close_vault();
+                            }
+                            catch(Exception e){}
+                        }
+                    }
+                  });
+                break;
+            case 1: //cancel button
+                changePassDialog.dismiss();
+                break;
+            case 2:
+                Toast.makeText(getApplicationContext(), "Select vault.", Toast.LENGTH_SHORT).show();
+                break;
+            case 3:
+                Toast.makeText(getApplicationContext(), "Enter current password.", Toast.LENGTH_SHORT).show();
+                break;
+            case 4:
+                Toast.makeText(getApplicationContext(), "Enter new password.", Toast.LENGTH_SHORT).show();
+                break;
+            case 5:
+                Toast.makeText(getApplicationContext(), "Confirm new password.", Toast.LENGTH_SHORT).show();
+                break;
+            case 6:
+                Toast.makeText(getApplicationContext(), "New password do not match.", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+        }
+    }
+
     //-----------------------------------------------------------------------------------------About Dialog---------------------------------------------------------------------------------------------------------
     @Override
     public void about_dialog_ok()
@@ -1278,6 +1328,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportActionBar().setTitle(Html.fromHtml("<font color="+medium_color+">" + "Cloud Sync & Local Backup" + "</font>"));
             current_fragment_code=3;
             drawer_layout.closeDrawers();
+        }
+        else if(menu_item.getItemId()==R.id.change_vault_password_item)
+        {
+            drawer_layout.closeDrawers();
+            table_name_and_vault_name_list=vault_db.get_table_name_vault_names();
+            changePassDialog.show(getSupportFragmentManager(),"changePassDialog");
         }
         else if(menu_item.getItemId()==R.id.about_item)
         {
