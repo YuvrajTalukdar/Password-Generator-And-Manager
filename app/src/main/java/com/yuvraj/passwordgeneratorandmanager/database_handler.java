@@ -37,6 +37,9 @@ public class database_handler extends SQLiteOpenHelper {
     private boolean vault_open=false;
     private final Executor mExecutor = Executors.newSingleThreadExecutor();
 
+    public String get_password()
+    {   return current_password;}
+
     public database_handler(@Nullable Context context,boolean encryption_enabled) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         encryption=encryption_enabled;

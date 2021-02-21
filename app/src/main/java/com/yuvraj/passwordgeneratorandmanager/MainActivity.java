@@ -1065,6 +1065,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 {
                     vaultFragment = (Vault_Fragment) getSupportFragmentManager().findFragmentByTag("vaultFragment");
                     vaultFragment.add_single_data_to_recycle_view(new vault_data(obj.id, obj.account_type, obj.account_id, obj.account_password, obj.date_of_modification, obj.is_meta_data, obj.vault_name));
+
+                    open_vault(table_no,vault_db.get_password(),3);
                 }
                 else if(called_from_id==0)
                 {
@@ -1104,22 +1106,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         deleteVaultDialog.called_from_option=called_from;
         deleteVaultDialog.show(getSupportFragmentManager(),"DeleteVaultDialog");
     }
+    private int table_no=-1;
     private void open_vault(int spinner_position,String password,int called_from)
     {
         database_handler.vault_data_and_error_status obj=vault_db.get_data_from_table(spinner_position,
                                                                                       table_name_and_vault_name_list.get(spinner_position)[0],
                                                                                       table_name_and_vault_name_list.get(spinner_position)[1],
-                                                                                      password);;
+                                                                                      password);
         if(obj.get_data_access_error_code()==1)
         {   System.out.println("Error! Table meta data is not updated.");}
         else if(obj.get_data_access_error_code()==2)
         {   System.out.println("Error! Table meta data indexing problem.");}
         else if(obj.get_data_access_error_code()==3)
         {   Toast.makeText(getApplicationContext(), "Vault failed to open, wrong password.", Toast.LENGTH_SHORT).show();}
-        else if(obj.get_data_access_error_code()==0) {
+        else if(obj.get_data_access_error_code()==0 && called_from!=3) {
             //vault open settings
             vault_open = true;
             deleteVaultDialog.dismiss();
+            table_no = spinner_position;
             if (called_from == 1)
             {
                 vaultFragment = (Vault_Fragment) getSupportFragmentManager().findFragmentByTag("vaultFragment");
@@ -1133,6 +1137,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             vault_data_list.addAll(0,obj.get_vault_data());
             if(called_from==0)
             {   enter_new_password_dialog(0);}
+        }
+        else if(called_from==3)
+        {
+            vault_data_list.clear();
+            vault_data_list.addAll(0,obj.get_vault_data());
         }
     }
     @Override

@@ -52,6 +52,90 @@
         android:layout_height="0dp"
         android:layout_weight="5.2">
 
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".ScrollBasedActivity">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    app:contentScrim="?attr/backgroundColor"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:toolbarId="@+id/toolbar">
+
+                    <LinearLayout
+                        android:id="@+id/searchLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/Black"
+                        android:paddingBottom="10dp"
+                        android:gravity="center|center_vertical"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:clickable="true"
+                        app:layout_collapseMode="parallax">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/search_editText"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1.85"
+                            android:background="@drawable/round_textview_grey"
+                            android:gravity="center"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="5dp"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:focusable="true"
+                            android:clickable="true"
+                            android:focusableInTouchMode="true"
+                            android:textColor="?attr/LightColor" />
+
+                        <ImageButton
+                            android:id="@+id/search_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/copy_buttom_style"
+                            android:contentDescription="@string/Copy_Pass"
+                            android:padding="5dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/search_icon" />
+                    </LinearLayout>
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarSize="10dp"
+                android:scrollbarThumbVertical="@drawable/scrollbar_style"
+                android:scrollbars="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_anchor="@id/app_bar"
+                app:layout_anchorGravity="bottom|end"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
         <TextView
             android:id="@+id/status_textview"
             android:layout_width="wrap_content"
@@ -64,19 +148,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbarSize="10dp"
-            android:scrollbarThumbVertical="@drawable/scrollbar_style"
-            android:scrollbars="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-        </androidx.recyclerview.widget.RecyclerView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
