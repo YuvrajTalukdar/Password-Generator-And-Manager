@@ -180,7 +180,7 @@ public class Vault_Fragment extends Fragment {
                 vault_data_list.addAll(main_activity.vault_data_list);
                 for(int a=vault_data_list.size()-1;a>=0;a--)
                 {
-                    if(!vault_data_list.get(a).account_type.contains(s.toString()) && !vault_data_list.get(a).account_id.contains(s.toString()))
+                    if(!vault_data_list.get(a).account_type.toUpperCase().contains(s.toString().toUpperCase()) && !vault_data_list.get(a).account_id.toUpperCase().contains(s.toString().toUpperCase()))
                     {   vault_data_list.remove(a);}
                 }
                 recycler_view_adapter_obj.notifyDataSetChanged();
